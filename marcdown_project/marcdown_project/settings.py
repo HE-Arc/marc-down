@@ -11,17 +11,22 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import secrets
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# SECURITY WARNING: keep the secret key used in production secret!
+try:
+    with open(os.path.join(BASE_DIR, 'secretkey.txt')) as f:
+        SECRET_KEY = f.read().strip()
+except:
+    SECRET_KEY = secrets.token_urlsafe(32)
+    with open(os.path.join(BASE_DIR, 'secretkey.txt'), 'w') as f:
+        f.write(SECRET_KEY)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-with open(os.path.join(BASE_DIR, 'secretkey.txt')) as f:
-    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_generate_secret_key',
 ]
 
 MIDDLEWARE = [
@@ -70,7 +74,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'marcdown_project.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
