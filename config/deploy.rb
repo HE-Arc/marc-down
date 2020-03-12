@@ -6,6 +6,7 @@ set :repo_url, "https://github.com/HE-Arc/marc-down.git"
 
 after 'deploy:publishing', 'uwsgi:restart'
 after 'deploy:updating', 'python:create_venv'
+after 'deploy:updating', 'python:migrate'
 
 namespace :uwsgi do
 	desc 'Restart application'
@@ -25,8 +26,15 @@ namespace :python do
 	task :create_venv do
 		on roles([:app, :web]) do |h|
 			execute "python3.6 -m venv #{venv_path}"
-			execute "source ${venv_path}/bin/activate"
+			execute "source #{venv_path}/bin/activate"
 			execute "#{venv_path}/bin/pip install -r #{release_path}/requirements.txt"
+		end
+	end
+
+	desc 'Apply migrations'
+	task :migrate do
+		on roles([:app, :web]) do |h|
+			execute "#{venv_path}/bin/python #{release_path}/marcdown_project/manage.py migrate"
 		end
 	end
 end
