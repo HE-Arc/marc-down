@@ -56,5 +56,3 @@ class Note(models.Model):
                     map(lambda tag: tag[1:-1], tags_string.split(", ")))
                 return tags
         return []
-
-    # TODO: on save, update a bunch of stuff (where does it goooooo ?)
