@@ -1,10 +1,15 @@
 from django.db import models
 
 import diff_match_patch as dmp_module
+import re
+
+
 class Note(models.Model):
-    owner = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name='ownNotes')
+    owner = models.ForeignKey(
+        'Profile', on_delete=models.CASCADE, related_name='ownNotes')
     public = models.BooleanField(default=True)
-    sharers = models.ManyToManyField('Profile', blank=True)
+    sharers = models.ManyToManyField(
+        'Profile', blank=True, related_name='sharedNotes')
 
     read_only = models.BooleanField(default=False)
 
@@ -30,4 +35,26 @@ class Note(models.Model):
             return True
         else:
             return False
+
+    def parse_tags(self):
+        '''
+        Finds tags within its content.
+
+        Tags are denoted by a 6th level header named tags like this:
+
+        ###### tags: `tag1`, `tag2`, ...
+
+        Returns: array of strings, containing the tags
+        '''
+        regex = r"^#{6} tags: (`[^`]+`(?:, `[^`]+`)*)$"
+        for line in self.content.split('\n'):
+            match = re.findall(regex, line)
+            if match:
+                tags_string = match[0]
+                # split tags and trim ``
+                tags = list(
+                    map(lambda tag: tag[1:-1], tags_string.split(", ")))
+                return tags
+        return []
+
     # TODO: on save, update a bunch of stuff (where does it goooooo ?)
