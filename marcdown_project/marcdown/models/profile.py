@@ -10,3 +10,20 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def get_tags(self):
+        '''
+        Collects all the tags from the notes owned by, shared with, or
+        favorited by the user, and counts the occurences.
+
+        Returns: dict, tag => count
+        '''
+        tags = dict()
+        notes = set(self.ownNotes.all() + self.sharedNotes.all() + self.favorites)
+        for tag in [note.tag.name for note in notes]:
+            if tag in tags:
+                tags[tag] += 1
+            else:
+                tags[tag] = 1
+        return tags
+
