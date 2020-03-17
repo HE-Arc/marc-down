@@ -20,7 +20,7 @@ class Profile(models.Model):
         '''
         tags = dict()
         notes = set(self.ownNotes.all() + self.sharedNotes.all() + self.favorites)
-        for tag in [note.tag.name for note in notes]:
+        for tag in [tag.name for tag in [note.tags for note in notes]]:
             if tag in tags:
                 tags[tag] += 1
             else:
