@@ -13,12 +13,18 @@ class Nav extends Component {
     return (
       <HashRouter>
         <nav>
+          <NavItem url="/" text="" exact={true} >
+            <img src="/static/images/logo.png" alt="" />
+          </NavItem>
           <ul>
             <li>
-              <NavItem url="/" text="Home" exact={true} />
+              <NavItem url="/" exact={true}>Home</NavItem>
             </li>
             <li>
-              <NavItem url="/editor" text="Editor" />
+              <NavItem url="/editor">Editor</NavItem>
+            </li>
+            <li>
+              <NavItem url="/logout">Logout</NavItem>
             </li>
           </ul>
         </nav>
