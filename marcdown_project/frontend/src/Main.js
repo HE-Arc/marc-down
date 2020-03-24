@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route
+  Route,
+  Switch
 } from "react-router-dom";
+import { HashRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 import Home from "./pages/Home";
 import Editor from "./pages/Editor";
@@ -15,16 +15,16 @@ class Main extends Component {
     return (
       <div>
         <Nav />
-        <Router>
+        <HashRouter>
           <Switch>
             <Route path="/editor">
               <Editor />
             </Route>
-            <Route path="/">
+            <Route exact path="/">
               <Home />
             </Route>
           </Switch>
-        </Router>
+        </HashRouter>
       </div>
     );
   }

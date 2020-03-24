@@ -1,26 +1,26 @@
 import React, { Component } from "react";
 
 import {
-  BrowserRouter as Router,
-  Link
+  NavLink,
 } from "react-router-dom";
+import { HashRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 
 class Main extends Component {
   render() {
     return (
-      <Router>
+      <HashRouter>
           <nav>
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <NavLink exact to="/">Home</NavLink>
               </li>
               <li>
-                <Link to="/editor">Editor</Link>
+                <NavLink to="/editor">Editor</NavLink>
               </li>
             </ul>
           </nav>
-      </Router>
+      </HashRouter>
     );
   }
 }
