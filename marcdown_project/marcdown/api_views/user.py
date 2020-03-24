@@ -13,16 +13,11 @@ class UserViewSet(viewsets.ViewSet):
     def list(self, request):
         user = request.user
         if user.is_authenticated:
-            print("authenticated get on api/user")
-            serializer = ProfileSerializer(data={
-                "name" : user.username,
-                # TODO: add info from user.profile once serializers exist
-            })
-            serializer.is_valid()
+            serializer = ProfileSerializer(user.profile)
             return JsonResponse(serializer.data, safe=False)
         else:
-            print("unauthenticated get on api/user")
-            return JsonResponse({"salut": "lel"})
+            # TODO: actual error
+            return JsonResponse({"error" : "no auth"})
 
     # post
     def create(self, request):

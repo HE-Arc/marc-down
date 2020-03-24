@@ -6,10 +6,10 @@ import re
 
 class Note(models.Model):
     owner = models.ForeignKey(
-        'Profile', on_delete=models.CASCADE, related_name='ownNotes')
+        'Profile', on_delete=models.CASCADE, related_name='own_notes')
     public = models.BooleanField(default=True)
     sharers = models.ManyToManyField(
-        'Profile', blank=True, related_name='sharedNotes')
+        'Profile', blank=True, related_name='shared_notes')
 
     read_only = models.BooleanField(default=False)
 
