@@ -5,24 +5,26 @@ import {
 } from "react-router-dom";
 import { HashRouter } from "react-router-dom/cjs/react-router-dom.min";
 
+import NavItem from "./NavItem"
 
-class Main extends Component {
+
+class Nav extends Component {
   render() {
     return (
       <HashRouter>
-          <nav>
-            <ul>
-              <li>
-                <NavLink exact to="/">Home</NavLink>
-              </li>
-              <li>
-                <NavLink to="/editor">Editor</NavLink>
-              </li>
-            </ul>
-          </nav>
+        <nav>
+          <ul>
+            <li>
+              <NavItem url="/" text="Home" exact={true} />
+            </li>
+            <li>
+              <NavItem url="/editor" text="Editor" />
+            </li>
+          </ul>
+        </nav>
       </HashRouter>
     );
   }
 }
 
-export default Main;
+export default Nav;
