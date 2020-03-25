@@ -11,8 +11,8 @@ app_name = "marcdown"
 
 router = routers.DefaultRouter()
 router.register(r'user', api_views.UserViewSet, basename='user')
-#router.register(r'tags', api_views.TagsViewSet, basename='tags')
-#router.register(r'note', api_views.NoteViewSet, basename='note')
+router.register(r'tags', api_views.TagsViewSet, basename='tags')
+router.register(r'note', api_views.NoteViewSet, basename='note')
 
 urlpatterns = [    
     path('', include(router.urls)),
