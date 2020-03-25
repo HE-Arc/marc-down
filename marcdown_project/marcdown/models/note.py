@@ -3,7 +3,7 @@ from django.db import models
 import diff_match_patch as dmp_module
 import re
 
-from . import Tag
+from .tag import Tag
 
 class Note(models.Model):
     owner = models.ForeignKey(

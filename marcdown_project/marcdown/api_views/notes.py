@@ -93,3 +93,4 @@ class NoteViewSet(viewsets.ViewSet):
                 pass
         else:
             # TODO: error : unauthenticated
+            pass

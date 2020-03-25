@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from marcdown.serializers import TagSerializer
 
-class TagViewSet(viewsets.ViewSet):
+class TagsViewSet(viewsets.ViewSet):
     # get
     # requires auth
     def list(self, request):
