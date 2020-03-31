@@ -34,9 +34,11 @@ class NoteViewSet(viewsets.ViewSet):
                 owner=user.profile,
                 public=getattr(data, "public", True),
                 read_only=getattr(data, "readOnly", False),
-                title="Blank",
-                content="",
+                title="Untitled",
+                content=getattr(data, "content", ""),
             )
+            note.parse_title()
+            note.parse_tags()
             for sharer_name in getattr(data, "sharedWith", []):
                 try:
                     sharer = User.objects.get(username=sharer_name).profile

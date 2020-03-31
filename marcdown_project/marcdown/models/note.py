@@ -55,34 +55,65 @@ class Note(models.Model):
             # patch is successfully applied
             self.content = patched_content
 
+            # update title
+            self.parse_title()
+
             # update tags
-            self.tags.set([])
-            for new_tag in self.parse_tags():
-                tag_instance, dummy = Tag.objects.get_or_create(name=new_tag)
-                self.tags.add(tag_instance)
-                # TODO: erase useless tags ?
+            self.parse_tags()
             
             return True
         else:
             return False
 
+    def parse_title(self):
+        '''
+        Finds the title within its content, sets it as this instance's title, and returns it.
+        If none is found, the title becomes "Untitled"
+
+        Title is the first 1st level header, like this:
+
+        # My cool title
+        '''
+        regex = r"^# (.*)$"
+        for line in self.content.split('\n'):
+            match = re.findall(regex, line)
+            if match:
+                title = match[0]
+                self.title = title
+                return title
+        title = "Untitled"
+        self.title = title
+        return title
+
     def parse_tags(self):
         '''
-        Finds tags within its content.
+        Finds tags within its content, updates the instance tags field, and returns them.
 
-        Tags are denoted by a 6th level header named tags like this:
+        Tags are denoted by a 6th level header named tags, like this:
 
         ###### tags: `tag1`, `tag2`, ...
 
         Returns: set of strings, containing the tags
         '''
+        new_tags = set()
+        old_tags = set(map(lambda tag : tag.name, self.tags.all))
+
         regex = r"^#{6} tags: (`[^`]+`(?:, `[^`]+`)*)$"
         for line in self.content.split('\n'):
             match = re.findall(regex, line)
             if match:
                 tags_string = match[0]
                 # split tags and trim ``
-                tags = set(
+                new_tags = set(
                     map(lambda tag: tag[1:-1], tags_string.split(", ")))
-                return tags
-        return set()
+                break
+        
+        for removed_tag in old_tags.difference(new_tags):
+            self.tags.remove(removed_tag)
+            # TODO: check if tag should be deleted from db ?
+
+        for added_tag in new_tags.difference(old_tags):
+            tag_instance, dummy = Tag.objects.get_or_create(name=added_tag)
+            self.tags.add(tag_instance)
+
+        
