@@ -1,7 +1,46 @@
 :root {
     --background-color: #333;
+    --background-color-darker: #111;
+    --text-color: #fefefe;
+    --color-primary: #aeaefe;
 }
 
 body {
     background-color: var(--background-color);
+    margin: 0;
+    color: var(--text-color);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+nav {
+    background-color: var(--background-color-darker);
+    height: 64px;
+    line-height: 64px;
+    margin: 0;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    margin-right: 20px;
+    float: right;
+}
+
+nav ul li {
+    display: inline;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: var(--text-color);
+}
+
+nav ul li a.active {
+    border-bottom: 3px solid var(--text-color);
 }
