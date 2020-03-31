@@ -21,13 +21,19 @@ class Note(models.Model):
     def __str__(self):
         return self.title
     
+    def allow_reading_by_user(self, profile):
+        if profile == self.owner:
+            return True
+        else:
+            return self.public or profile in self.sharers.all()
+
     def allow_update_from_user(self, profile):
         if profile == self.owner:
             return True
         elif self.read_only:
             return False
         else:
-            return self.public or profile in self.sharers
+            return self.public or profile in self.sharers.all()
 
     def update(self, patch_text):
         '''
