@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer
 
 from rest_framework.decorators import action
+from rest_framework import status
 
 from django.contrib.auth.models import User
 from marcdown.serializers import TagSerializer
@@ -21,5 +22,5 @@ class TagsViewSet(viewsets.ViewSet):
             tags = user.profile.get_tags() # {tag_name : count}
             return JsonResponse({"tags" : tags})
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass

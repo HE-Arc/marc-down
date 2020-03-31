@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer
 
 from rest_framework.decorators import action
+from rest_framework import status
 
 from django.contrib.auth.models import User
 from marcdown.serializers import ProfileSerializer
@@ -18,7 +19,7 @@ class UserViewSet(viewsets.ViewSet):
             serializer = ProfileSerializer(user.profile)
             return JsonResponse(serializer.data)
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
 
     @action(detail=False, methods=['post'])
@@ -36,7 +37,7 @@ class UserViewSet(viewsets.ViewSet):
                 profile.favorites.add(note)
                 # TODO: return updated user.get_tags() ??
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
     
     @favorites.mapping.delete
@@ -53,5 +54,5 @@ class UserViewSet(viewsets.ViewSet):
             profile.favorites.remove(note)
             # TODO: return updated user.get_tags() ??
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass

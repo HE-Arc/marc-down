@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.renderers import JSONRenderer
 
 from rest_framework.decorators import action
+from rest_framework import status
 
 from django.contrib.auth.models import User
 from marcdown.models import Note, Profile
@@ -48,7 +49,7 @@ class NoteViewSet(viewsets.ViewSet):
                     pass
             note.save()
         else:
-            # TODO: error ?
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
     
     # update (public, readonly, sharers)
@@ -81,7 +82,7 @@ class NoteViewSet(viewsets.ViewSet):
                 # TODO: error : not allowed
                 pass
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
 
     # patch (diff)
@@ -108,7 +109,7 @@ class NoteViewSet(viewsets.ViewSet):
                 # TODO: error : not allowed
                 pass
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
     
     def destroy(self, request, pk=None):
@@ -127,5 +128,5 @@ class NoteViewSet(viewsets.ViewSet):
                 # TODO: error : not allowed
                 pass
         else:
-            # TODO: error : unauthenticated
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
