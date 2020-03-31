@@ -19,7 +19,7 @@ class Profile(models.Model):
         Returns: dict, tag => count
         '''
         tags = dict()
-        notes = set(self.ownNotes.all() + self.sharedNotes.all() + self.favorites)
+        notes = set(self.own_notes.all()).union(set(self.shared_notes.all())).union(set(self.favorites.all()))
         for tag in [tag.name for tag in [note.tags for note in notes]]:
             if tag in tags:
                 tags[tag] += 1
