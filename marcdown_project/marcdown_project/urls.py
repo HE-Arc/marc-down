@@ -21,8 +21,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('api/', include("marcdown.urls", namespace="marcdown")),
     path('login/', auth_views.LoginView.as_view(), {'template_name' : 'registration/login.html'}),
+    path('', include('frontend.urls'))
 ]
 
