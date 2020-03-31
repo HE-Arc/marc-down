@@ -22,12 +22,18 @@ class Note(models.Model):
         return self.title
     
     def allow_reading_by_user(self, profile):
+        '''
+        Returns whether the given user has read permission on the note
+        '''
         if profile == self.owner:
             return True
         else:
             return self.public or profile in self.sharers.all()
 
     def allow_update_from_user(self, profile):
+        '''
+        Returns whether the given user has write permission on the note
+        '''
         if profile == self.owner:
             return True
         elif self.read_only:

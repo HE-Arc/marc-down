@@ -10,13 +10,16 @@ from marcdown.serializers import ProfileSerializer
 class UserViewSet(viewsets.ViewSet):
     # get
     def list(self, request):
+        '''
+        Gives all the information pertaining to the authenticated user
+        '''
         user = request.user
         if user.is_authenticated:
             serializer = ProfileSerializer(user.profile)
             return JsonResponse(serializer.data)
         else:
-            # TODO: actual error
-            return JsonResponse({"error" : "no auth"})
+            # TODO: error : unauthenticated
+            pass
 
     # post
     def create(self, request):
@@ -57,4 +60,4 @@ class UserViewSet(viewsets.ViewSet):
             # TODO: return updated user.get_tags() ??
         else:
             # TODO: error : unauthenticated
-        pass
+            pass

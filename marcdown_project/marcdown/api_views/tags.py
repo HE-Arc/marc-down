@@ -11,6 +11,11 @@ class TagsViewSet(viewsets.ViewSet):
     # get
     # requires auth
     def list(self, request):
+        '''
+        Reponds with all the tags that can be found among the
+        authenticated user's own notes, shared notes, and fav'd notes,
+        along with the corresponding number of notes having each tag
+        '''
         user = request.user
         if user.is_authenticated:
             tags = user.profile.get_tags() # {tag_name : count}
