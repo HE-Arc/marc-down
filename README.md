@@ -20,3 +20,13 @@ python marcdown_project/manage.py migrate
 # Run the server
 python marcdown_project/manage.py runserver 
 ```
+
+```bash
+cd marcdown_project/frontend
+
+# Install modules
+npm install
+
+# "Compile" js files
+npm run dev
+```
