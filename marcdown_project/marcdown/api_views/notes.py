@@ -35,19 +35,19 @@ class NoteViewSet(viewsets.ViewSet):
                 owner=user.profile,
                 public=getattr(data, "public", True),
                 read_only=getattr(data, "readOnly", False),
-                title="Untitled",
                 content=getattr(data, "content", ""),
             )
             note.parse_title()
             note.parse_tags()
+            bad_sharers = []
             for sharer_name in getattr(data, "sharedWith", []):
                 try:
                     sharer = User.objects.get(username=sharer_name).profile
                     note.sharers.add(sharer)
                 except:
-                    # TODO: error when sharer not found ?
-                    pass
+                    bad_sharers.append(sharer_name)
             note.save()
+            return JsonResponse(status=status.HTTP_200_OK, data={"status" : "true", "badSharerNames" : bad_sharers})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
@@ -70,19 +70,20 @@ class NoteViewSet(viewsets.ViewSet):
                 new_sharers_names = getattr(data, "sharedWith", None)
                 if new_sharers_names:
                     note.sharers.set([])
+
+                    bad_sharers = []
                     for sharer_name in new_sharers_names:
                         try:
                             sharer = User.objects.get(username=sharer_name).profile
                             note.sharers.add(sharer)
                         except:
-                            # TODO: error when sharer not found ?
-                            pass
+                            bad_sharers.append(sharer_name)
                 note.save()
+                return JsonResponse(status=status.HTTP_200_OK, data={"status" : "true", "badSharerNames" : bad_sharers})
             else:
                 return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
-            pass
 
     # patch (diff)
     # needs auth
@@ -100,15 +101,14 @@ class NoteViewSet(viewsets.ViewSet):
             if note.allow_update_from_user(user.profile):
                 diff = getattr(data, "diff", None)
                 if diff:
-                    note.update(diff)
+                    if not note.update(diff):
+                        return JsonResponse(status=status.HTTP_422_UNPROCESSABLE_ENTITY, data={"status" : "false", "message" : "Given diff could not be applied"})
                 else:
-                    # TODO: error : bad args
-                    pass
+                    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, data={"status" : "false", "message" : "Missing `diff` data in request"})
             else:
                 return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
-            pass
     
     def destroy(self, request, pk=None):
         '''
@@ -122,8 +122,8 @@ class NoteViewSet(viewsets.ViewSet):
 
             if user.profile == note.owner:
                 note.delete()
+                return JsonResponse(status=status.HTTP_200_OK)
             else:
                 return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
-            pass
