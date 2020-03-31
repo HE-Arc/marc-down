@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Our user model has to extend the base, but this seems difficult from looking around
 # Instead, this is our profile model, which has a one to one relation
@@ -27,3 +29,12 @@ class Profile(models.Model):
                 tags[tag] = 1
         return tags
 
+
+@receiver(post_save, sender=User)
+def creation(self, instance, created, **kwargs):
+    '''
+    Creates a profile following the creation of a new user
+    '''
+    if created:
+        profile = Profile(user = instance)
+        profile.save()
