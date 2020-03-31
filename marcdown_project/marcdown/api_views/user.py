@@ -21,12 +21,6 @@ class UserViewSet(viewsets.ViewSet):
             # TODO: error : unauthenticated
             pass
 
-    # post
-    def create(self, request):
-        # TODO: register new user using django.contrib.auth
-        # or is it the other way around ?
-        pass
-
     @action(detail=False, methods=['post'])
     def favorites(self, request):
         '''
