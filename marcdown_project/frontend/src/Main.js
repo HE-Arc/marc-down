@@ -9,6 +9,7 @@ import { HashRouter } from "react-router-dom/cjs/react-router-dom.min";
 import Home from "./pages/Home";
 import Editor from "./pages/Editor";
 import Nav from "./components/common/Nav";
+import { PrivateRoute } from "./components/PrivateRoute";
 
 class Main extends Component {
   render() {
@@ -20,9 +21,9 @@ class Main extends Component {
             <Route path="/editor">
               <Editor />
             </Route>
-            <Route exact path="/">
+            <PrivateRoute exact path="/">
               <Home />
-            </Route>
+            </PrivateRoute>
           </Switch>
         </HashRouter>
       </div>
