@@ -94,3 +94,19 @@ class NoteViewSet(viewsets.ViewSet):
         else:
             # TODO: error : unauthenticated
             pass
+    
+    def destroy(self, request, pk=None):
+        user = request.user
+        if user.is_authenticated:
+            data = request.data
+            queryset = Note.objects.all()
+            note = get_object_or_404(queryset, id=pk)
+
+            if user.profile == note.owner:
+                note.delete()
+            else:
+                # TODO: error : not allowed
+                pass
+        else:
+            # TODO: error : unauthenticated
+            pass
