@@ -6,7 +6,7 @@ class Editor extends Component {
       <div>
         <div>
           <div></div>
-          <textarea>WIP</textarea>
+          <textarea value="WIP" readOnly></textarea>
         </div>
         <div></div>
       </div>
