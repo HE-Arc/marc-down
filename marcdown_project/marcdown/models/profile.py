@@ -31,7 +31,7 @@ class Profile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def creation(self, instance, created, **kwargs):
+def creation(instance, created, **kwargs):
     '''
     Creates a profile following the creation of a new user
     '''
