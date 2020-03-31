@@ -23,4 +23,3 @@ class TagsViewSet(viewsets.ViewSet):
             return JsonResponse({"tags" : tags})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
-            pass

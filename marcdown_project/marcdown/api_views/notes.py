@@ -79,8 +79,7 @@ class NoteViewSet(viewsets.ViewSet):
                             pass
                 note.save()
             else:
-                # TODO: error : not allowed
-                pass
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
@@ -106,8 +105,7 @@ class NoteViewSet(viewsets.ViewSet):
                     # TODO: error : bad args
                     pass
             else:
-                # TODO: error : not allowed
-                pass
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
@@ -125,8 +123,7 @@ class NoteViewSet(viewsets.ViewSet):
             if user.profile == note.owner:
                 note.delete()
             else:
-                # TODO: error : not allowed
-                pass
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass

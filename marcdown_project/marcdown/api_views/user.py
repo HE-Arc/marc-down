@@ -38,7 +38,6 @@ class UserViewSet(viewsets.ViewSet):
                 # TODO: return updated user.get_tags() ??
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
-            pass
     
     @favorites.mapping.delete
     def remove_favorite(self, request):
@@ -55,4 +54,3 @@ class UserViewSet(viewsets.ViewSet):
             # TODO: return updated user.get_tags() ??
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
-            pass
