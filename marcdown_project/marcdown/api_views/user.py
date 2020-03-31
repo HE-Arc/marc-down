@@ -24,7 +24,37 @@ class UserViewSet(viewsets.ViewSet):
         # or is it the other way around ?
         pass
 
-    @action(detail=False, methods=['post', 'delete'])
+    @action(detail=False, methods=['post'])
     def favorites(self, request):
-        # TODO: read note id from request and add / remove it to / from favorites
+        '''
+        Adds the given note to the authenticated user's favorites
+        '''
+        user = request.user
+        if user.is_authenticated:
+            note_id = getattr(request.data, "noteId", -1)
+            queryset = Note.objects.all()
+            note = get_object_or_404(queryset, id=note_id)
+
+            if note.allow_reading_by_user(profile):
+                profile.favorites.add(note)
+                # TODO: return updated user.get_tags() ??
+        else:
+            # TODO: error : unauthenticated
+            pass
+    
+    @favorites.mapping.delete
+    def remove_favorite(self, request):
+        '''
+        Removes the given note from the authenticated user's favorites
+        '''
+        user = request.user
+        if user.is_authenticated:
+            note_id = getattr(request.data, "noteId", -1)
+            queryset = Note.objects.all()
+            note = get_object_or_404(queryset, id=note_id)
+
+            profile.favorites.remove(note)
+            # TODO: return updated user.get_tags() ??
+        else:
+            # TODO: error : unauthenticated
         pass
