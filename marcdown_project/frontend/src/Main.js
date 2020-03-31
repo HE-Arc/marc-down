@@ -18,8 +18,8 @@ class Main extends Component {
         <Nav />
         <HashRouter>
           <Switch>
-            <Route path="/editor">
-              <Editor />
+            <Route path="/note/:id"
+              render={({ match }) => <Editor match={match} />}>
             </Route>
             <PrivateRoute exact path="/">
               <Home />

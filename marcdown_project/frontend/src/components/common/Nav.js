@@ -21,7 +21,7 @@ class Nav extends Component {
               <NavItem url="/" exact={true}>Home</NavItem>
             </li>
             <li>
-              <NavItem url="/editor">Editor</NavItem>
+              <NavItem url="/note/new">Editor</NavItem>
             </li>
             <li>
               <NavItem url="/logout">Logout</NavItem>

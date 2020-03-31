@@ -6,7 +6,7 @@ class Editor extends Component {
       <div>
         <div>
           <div></div>
-          <textarea value="WIP" readOnly></textarea>
+          <textarea value={"Editing note with ID:" + this.props.match.params.id} readOnly></textarea>
         </div>
         <div></div>
       </div>
