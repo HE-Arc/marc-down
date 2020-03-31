@@ -14,7 +14,7 @@ class TagsViewSet(viewsets.ViewSet):
         user = request.user
         if user.is_authenticated:
             tags = user.profile.get_tags() # {tag_name : count}
-            return JsonResponse({tags : tags})
+            return JsonResponse({"tags" : tags})
         else:
             # TODO: error : unauthenticated
             pass
