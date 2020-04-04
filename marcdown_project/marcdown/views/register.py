@@ -15,7 +15,7 @@ def register(request):
             
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('/')
     else:
         form = UserCreationForm()
 
