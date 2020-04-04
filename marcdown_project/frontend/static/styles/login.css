@@ -36,6 +36,11 @@ html, body {
 }
 
 
+#auth-container.larger {
+    width: 600px;
+    margin-left: -300px;
+    margin-top: -300px;
+}
 
 #login-header {
     font-size: 2em;
