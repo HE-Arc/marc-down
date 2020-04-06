@@ -34,6 +34,16 @@ nav ul {
     float: right;
 }
 
+#site-name {
+    color: white;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+#logo {
+    vertical-align: middle;
+}
+
 nav ul li {
     display: inline;
     font-weight: bold;

@@ -14,7 +14,7 @@ class Nav extends Component {
       <HashRouter>
         <nav>
           <NavItem url="/" text="" exact={true} >
-            <img src="/static/images/logo.png" alt="" />
+            <img id="logo" src="/static/images/logo.png" alt="" /><span id="site-name">Marc-Down</span>
           </NavItem>
           <ul>
             <li>
