@@ -7,7 +7,7 @@
  * @returns {Promise} resolve(data {object|string}) data: object if could parse JSON, reject()
  */
 export default function query(url, verb = "GET", body = undefined) {
-    const headers = { "Content-Type": "application/json" };
+    const headers = { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") };
 
     const request = {
         method: verb,
@@ -35,4 +35,21 @@ export default function query(url, verb = "GET", body = undefined) {
             resolve(response.json());
         });
     });
+}
+
+// Source: https://docs.djangoproject.com/en/3.0/ref/csrf/#setting-the-token-on-the-ajax-request
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
