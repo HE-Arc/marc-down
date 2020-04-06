@@ -49,7 +49,7 @@ class Note(models.Model):
         '''
         dmp = dmp_module.diff_match_patch()
         patch = dmp.patch_fromText(patch_text)
-        patched_content, results = dmp.patch_apply(self.content, patch)
+        patched_content, results = dmp.patch_apply(patch, self.content)
 
         if all(results):
             # patch is successfully applied
@@ -61,6 +61,8 @@ class Note(models.Model):
             # update tags
             self.parse_tags()
             
+            self.save();
+
             return True
         else:
             return False
@@ -96,7 +98,7 @@ class Note(models.Model):
         Returns: set of strings, containing the tags
         '''
         new_tags = set()
-        old_tags = set(map(lambda tag : tag.name, self.tags.all))
+        old_tags = set(map(lambda tag : tag.name, self.tags.all()))
 
         regex = r"^#{6} tags: (`[^`]+`(?:, `[^`]+`)*)$"
         for line in self.content.split('\n'):

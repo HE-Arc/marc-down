@@ -22,4 +22,4 @@ class TagsViewSet(viewsets.ViewSet):
             tags = user.profile.get_tags() # {tag_name : count}
             return JsonResponse({"tags" : tags})
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
