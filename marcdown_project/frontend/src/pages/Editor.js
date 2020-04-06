@@ -30,8 +30,7 @@ class Editor extends Component {
         diff: patchText
       }).then((result) => {});
       this.state.previousSavedText = this.state.input;
-    }
-    else {
+    } else {
       // Create a new note
       query(`/api/note/`, "POST", {
         public: false,
@@ -50,13 +49,11 @@ class Editor extends Component {
 
     if (isNaN(id)) {
       this.setState({ defaultInput: "# Could not load this note\n\nInvalid ID specified\n\nEdit this note to create a new one" });
-    }
-    else {
+    } else {
       query(`/api/note/${id}`).then((result) => {
         if (result.id === undefined) {
           this.setState({ defaultInput: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
-        }
-        else {
+        } else {
           this.setState({ defaultInput: result.content, existsInDatabase: true, previousSavedText: result.content, noteId: id });
         }
       }).catch((error) => {
