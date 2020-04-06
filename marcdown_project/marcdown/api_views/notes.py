@@ -33,9 +33,9 @@ class NoteViewSet(viewsets.ViewSet):
             data = request.data
             note = Note(
                 owner=user.profile,
-                public=getattr(data, "public", True),
-                read_only=getattr(data, "readOnly", False),
-                content=getattr(data, "content", ""),
+                public=data.get("public", True),
+                read_only=data.get("readOnly", False),
+                content=data.get("content", ""),
             )
 
             note.save()
