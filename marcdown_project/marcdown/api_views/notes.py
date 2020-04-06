@@ -37,8 +37,12 @@ class NoteViewSet(viewsets.ViewSet):
                 read_only=getattr(data, "readOnly", False),
                 content=getattr(data, "content", ""),
             )
+
+            note.save()
+
             note.parse_title()
             note.parse_tags()
+
             bad_sharers = []
             for sharer_name in getattr(data, "sharedWith", []):
                 try:
