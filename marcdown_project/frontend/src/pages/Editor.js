@@ -6,7 +6,15 @@ import "../../static/styles/code-mirror.css"
 
 import ReactMarkdown from "react-markdown"
 
-const input = "# This is a header\n\nAnd this is a paragraph. TODO: Parse from codemirror"
+class Editor extends Component {
+  constructor(params) {
+    super(params);
+    this.state = {
+      input: "Loading...",
+      existsInDatabase: false
+    };
+  }
+
 
 class Editor extends Component {
   render() {
@@ -14,18 +22,19 @@ class Editor extends Component {
       <div>
         <div id="editor">
           <CodeMirror
-            value={"Editing note with ID:" + this.props.match.params.id}
+            value={this.state.input}
             options={{
-              mode: "xml",
+              mode: "md",
               theme: "material",
               lineNumbers: true,
             }}
             onChange={(editor, data, value) => {
+              this.setState({ input: value });
             }}
           />
         </div>
         <div id="md-render">
-          <ReactMarkdown source={input} />
+          <ReactMarkdown source={this.state.input} />
         </div>
       </div>
     );
