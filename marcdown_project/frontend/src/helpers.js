@@ -1,8 +1,8 @@
-// Based on https://github.com/RedMser/discotron/blob/webapi-rest/dashboard/www/scripts/utils/utils.js
+// Based on work done https://github.com/forwards-long-jump/discotron
 /**
  * Make a HTTP request on the specified URL, with data encoded as json
- * @param {string} verb HTTP verb to send request with
  * @param {string} url Url to make the post request on
+ * @param {string} [verb="GET"] HTTP verb to send request with
  * @param {object} [body] Data that will be JSON.stringified and sent to the website. Will be converted as URL params for GET requests, which will convert everything to string.
  * @returns {Promise} resolve(data {object|string}) data: object if could parse JSON, reject()
  */
