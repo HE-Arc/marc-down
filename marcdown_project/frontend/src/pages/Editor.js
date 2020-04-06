@@ -8,6 +8,7 @@ class Editor extends Component {
   render() {
     return (
       <div>
+        <div id="editor">
           <CodeMirror
             value={"Editing note with ID:" + this.props.match.params.id}
             options={{
@@ -19,7 +20,9 @@ class Editor extends Component {
             }}
           />
         </div>
-        <div></div>
+        <div id="md-render">
+            
+        </div>
       </div>
     );
   }
