@@ -44,7 +44,7 @@ class NoteViewSet(viewsets.ViewSet):
             note.parse_tags()
 
             bad_sharers = []
-            for sharer_name in getattr(data, "sharedWith", []):
+            for sharer_name in data.get("sharedWith", []):
                 try:
                     sharer = User.objects.get(username=sharer_name).profile
                     note.sharers.add(sharer)
@@ -69,9 +69,9 @@ class NoteViewSet(viewsets.ViewSet):
             note = get_object_or_404(queryset, id=pk)
 
             if note.allow_update_from_user(user.profile):
-                note.public = getattr(data, "public", note.public)
-                note.read_only = getattr(data, "readOnly", note.read_only)
-                new_sharers_names = getattr(data, "sharedWith", None)
+                note.public = data.get("public", note.public)
+                note.read_only = data.get("readOnly", note.read_only)
+                new_sharers_names = data.get("sharedWith", None)
                 if new_sharers_names:
                     note.sharers.set([])
 
@@ -103,7 +103,7 @@ class NoteViewSet(viewsets.ViewSet):
             note = get_object_or_404(queryset, id=pk)
 
             if note.allow_update_from_user(user.profile):
-                diff = getattr(data, "diff", None)
+                diff = data.get("diff", None)
                 if diff:
                     if not note.update(diff):
                         return JsonResponse(status=status.HTTP_422_UNPROCESSABLE_ENTITY, data={"status" : "false", "message" : "Given diff could not be applied"})
