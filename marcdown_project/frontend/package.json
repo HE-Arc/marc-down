@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "codemirror": "^5.52.2",
+    "diff-match-patch": "^1.0.4",
     "react-codemirror2": "^7.1.0",
     "react-markdown": "^4.3.1",
     "react-router-dom": "^5.1.2",
