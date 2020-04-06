@@ -1,0 +1,72 @@
+html, body {
+    margin: 0 auto;
+    text-align: center;
+}
+
+#auth-container {
+    padding: 20px;
+    border-radius: 2px;
+    display: inline-block;
+    color: black;
+    background-color: #fefefe;
+    box-shadow: 0px 0px 2px #eee;
+    width: 300px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    margin-top: -200px;
+    /* Half of width */
+    margin-left: -150px;
+}
+
+#auth-container button {
+    width: calc(100% - 5px);
+}
+
+#auth-container input {
+    width: calc(100% - 20px);
+}
+
+#auth-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+
+#auth-container.larger {
+    width: 600px;
+    margin-left: -300px;
+    margin-top: -300px;
+}
+
+#login-header {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#register-link {
+    text-align: left;
+    margin: 10px;
+    margin-left: 0px;
+}
+
+.helptext {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+    color: #666;
+}
+
+ul {
+    color: #666;
+    text-align: left;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.errorlist {
+    color: red;
+}
