@@ -10,7 +10,8 @@ class Home extends Component {
       ownCards: [],
       sharedCards: [],
       tags: {},
-      tagSearchValue: ""
+      tagSearchValue: "",
+      nameSearchValue: ""
     };
 
     this._loadCards();
@@ -51,15 +52,28 @@ class Home extends Component {
     this.setState({ tagSearchValue: tagName });
   }
 
-  _searchTagFilter(card) {
-    const searchValue = this.state.tagSearchValue.toLowerCase();
-    if (searchValue === "") {
+  _filterNotes(card) {
+    const tagSearch = this.state.tagSearchValue.toLowerCase();
+    const nameSearch = this.state.nameSearchValue.toLowerCase();
+
+    if (tagSearch === "" && nameSearch === "") {
+      return true;
+    }
+
+    if (nameSearch !== "") {
+      const cardName = (card.title || "untitled").toLowerCase();
+      if (!cardName.includes(nameSearch) && !nameSearch.includes(cardName)) {
+        return false;
+      }
+    }
+
+    if (tagSearch === "") {
       return true;
     }
     else {
       for (let i = 0; i < card.tags.length; i++) {
         const tagName = card.tags[i].name.toLowerCase();
-        if (tagName.includes(searchValue) || searchValue.includes(tagName)) {
+        if (tagName.includes(tagSearch) || tagSearch.includes(tagName)) {
           return true;
         }
       }
@@ -87,14 +101,22 @@ class Home extends Component {
           </div>
         </div>
         <div id="note-container">
+          <p>Search a note: </p>
+          <input id="input-search-note" value={this.state.nameSearchValue} type="text" placeholder="Filter notes by name" onChange={(e) => {
+            this.setState({ nameSearchValue: e.target.value });
+          }} />
           <h1>My notes</h1>
           <div>
-            {this.state.ownCards.filter((card) => this._searchTagFilter(card)).map((card, key) =>
+            {this.state.ownCards.filter((card) => this._filterNotes(card)).map((card, key) =>
               <Card key={key} id={card.id} tags={card.tags} stared={true} owner={card.owner.name}>{card.title || "Untitled"}</Card>
             )}
           </div>
           <h1>Shared with me</h1>
-          <div></div>
+          <div>
+            {this.state.sharedCards.filter((card) => this._filterNotes(card)).map((card, key) =>
+              <Card key={key} id={card.id} tags={card.tags} stared={true} owner={card.owner.name}>{card.title || "Untitled"}</Card>
+            )}
+          </div>
         </div>
       </div>
     );

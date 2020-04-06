@@ -175,3 +175,7 @@ button {
 #tags-list p {
     cursor: pointer;
 }
+
+#input-search-note {
+    width: 50%;
+}
