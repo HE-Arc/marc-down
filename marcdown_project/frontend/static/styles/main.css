@@ -7,6 +7,7 @@
 }
 
 body {
+    box-sizing: border-box;
     background-color: var(--background-color);
     margin: 0;
     color: var(--text-color);
@@ -45,6 +46,32 @@ nav ul li a {
 
 nav ul li a.active {
     border-bottom: 3px solid var(--text-color);
+}
+
+#editor {
+    border-right: 5px solid #666;
+    position: fixed;
+    /* Nav bar height */
+    top: 64px;
+    bottom: 0;
+    left: 0;
+    width: calc(50% - 10px);
+}
+
+#md-render {
+    background-color: white;
+    position: fixed;
+    /* Nav bar height */
+    top: 64px;
+    bottom: 0;
+    left: calc(50% - 5px);
+    /* 40px padding - 5px from left */
+    width: calc(50% - 35px);
+
+    color: black;
+    padding: 20px;
+
+    overflow-y: auto;
 }
 
 input, button {
