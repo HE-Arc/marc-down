@@ -16,6 +16,23 @@ class Editor extends Component {
     };
   }
 
+  _saveNote() {
+    if (this.state.existsInDatabase) {
+      console.log("UPDATING USING A PATCH");
+    }
+    else {
+      // Create a new note
+      query(`/api/note/`, "POST", {
+        public: false,
+        readOnly: false,
+        sharedWith: [],
+        content: this.state.input
+      }).then((result) => {
+        this.setState({ existsInDatabase: true });
+      });
+    }
+  }
+
   _loadFromDatabase(id) {
     id = parseInt(id);
 
@@ -28,7 +45,7 @@ class Editor extends Component {
           this.setState({ input: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
         }
         else {
-          this.setState({ existsInDatabase: true });
+          this.setState({ input: result.content, existsInDatabase: true });
           console.log(result);
         }
       }).catch((error) => {
