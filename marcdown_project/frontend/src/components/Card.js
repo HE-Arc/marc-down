@@ -2,6 +2,9 @@
 import React, { Component } from "react";
 import Tag from "./Tag.js"
 import Star from "./Star.js"
+import {
+    Link,
+} from "react-router-dom";
 
 export default class Card extends Component {
     constructor(props) {
@@ -13,16 +16,18 @@ export default class Card extends Component {
 
     render(...rest) {
         return (
-            <div className="note-card">
-                <Star />
-                <span className="title">{this.props.children}</span>
-                <div>
-                    {this.props.tags.map((tag, key) =>
-                        <Tag key={key}>{tag}</Tag>
-                    )}
+            <Link to={`/note/${this.props.id}`}>
+                <div className="note-card">
+                    <Star />
+                    <span className="title">{this.props.children}</span>
+                    <div>
+                        {this.props.tags.map((tag, key) =>
+                            <Tag key={key}>{tag.name}</Tag>
+                        )}
+                    </div>
+                    <div className="note-owner">{this.props.owner}</div>
                 </div>
-                <div className="note-owner">{this.props.owner}</div>
-            </div>
+            </Link>
         );
     }
 }
