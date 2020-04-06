@@ -3,6 +3,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2"
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import "../../static/styles/code-mirror.css"
+import query from "../helpers.js";
 
 import ReactMarkdown from "react-markdown"
 
@@ -15,8 +16,37 @@ class Editor extends Component {
     };
   }
 
+  _loadFromDatabase(id) {
+    id = parseInt(id);
 
-class Editor extends Component {
+    if (isNaN(id)) {
+      this.setState({ input: "# Could not load this note\n\nInvalid ID specified\n\nEdit this note to create a new one" });
+    }
+    else {
+      query(`/api/note/${id}`).then((result) => {
+        if (result.id === undefined) {
+          this.setState({ input: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
+        }
+        else {
+          this.setState({ existsInDatabase: true });
+          console.log(result);
+        }
+      }).catch((error) => {
+        this.setState({ input: "# Could not load this note\n\nMake sure you are connected to the internet\n\nEdit this note to create a new one" });
+      });
+
+    }
+
+  }
+
+  componentDidMount() {
+    if (this.props.match.params.id === "new") {
+      this.setState({ input: "# Note name\n\n" });
+    } else {
+      this._loadFromDatabase(this.props.match.params.id);
+    }
+  }
+
   render() {
     return (
       <div>
