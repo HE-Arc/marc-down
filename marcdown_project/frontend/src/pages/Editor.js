@@ -37,19 +37,18 @@ class Editor extends Component {
     id = parseInt(id);
 
     if (isNaN(id)) {
-      this.setState({ input: "# Could not load this note\n\nInvalid ID specified\n\nEdit this note to create a new one" });
+      this.setState({ defaultInput: "# Could not load this note\n\nInvalid ID specified\n\nEdit this note to create a new one" });
     }
     else {
       query(`/api/note/${id}`).then((result) => {
         if (result.id === undefined) {
-          this.setState({ input: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
+          this.setState({ defaultInput: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
         }
         else {
-          this.setState({ input: result.content, existsInDatabase: true });
-          console.log(result);
+          this.setState({ defaultInput: result.content, existsInDatabase: true, previousSavedText: result.content, noteId: id });
         }
       }).catch((error) => {
-        this.setState({ input: "# Could not load this note\n\nMake sure you are connected to the internet\n\nEdit this note to create a new one" });
+        this.setState({ defaultInput: "# Could not load this note\n\nMake sure you are connected to the internet\n\nEdit this note to create a new one" });
       });
 
     }
@@ -58,7 +57,7 @@ class Editor extends Component {
 
   componentDidMount() {
     if (this.props.match.params.id === "new") {
-      this.setState({ input: "# Note name\n\n" });
+      this.setState({ defaultInput: "# Note name\n\n" });
     } else {
       this._loadFromDatabase(this.props.match.params.id);
     }
@@ -69,7 +68,7 @@ class Editor extends Component {
       <div>
         <div id="editor">
           <CodeMirror
-            value={this.state.input}
+            value={this.state.defaultInput}
             options={{
               mode: "md",
               theme: "material",
