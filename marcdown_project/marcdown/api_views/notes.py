@@ -51,7 +51,7 @@ class NoteViewSet(viewsets.ViewSet):
                 except:
                     bad_sharers.append(sharer_name)
             note.save()
-            return JsonResponse(status=status.HTTP_200_OK, data={"status" : "true", "badSharerNames" : bad_sharers})
+            return JsonResponse(status=status.HTTP_200_OK, data={"status" : "true", "id": note.id, "badSharerNames" : bad_sharers})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
             pass
