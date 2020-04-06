@@ -2,7 +2,8 @@
     --background-color: #333;
     --background-color-darker: #111;
     --text-color: #fefefe;
-    --color-primary: #aeaefe;
+    --color-link: #2C7EEA;
+    --color-primary: #63CC61;
 }
 
 body {
@@ -10,10 +11,11 @@ body {
     margin: 0;
     color: var(--text-color);
     font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
 }
 
 a {
-    color: var(--color-primary);
+    color: var(--color-link);
     text-decoration: none;
 }
 
@@ -43,4 +45,21 @@ nav ul li a {
 
 nav ul li a.active {
     border-bottom: 3px solid var(--text-color);
+}
+
+input, button {
+    background-color: white;
+    padding: 5px;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    box-shadow: 0px 0px 1px #666;
+}
+
+button {
+    color: var(--text-color);
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: none;
+    background-color: var(--color-primary);
 }
