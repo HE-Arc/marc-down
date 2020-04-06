@@ -4,21 +4,34 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import "../../static/styles/code-mirror.css"
 import query from "../helpers.js";
-
 import ReactMarkdown from "react-markdown"
+import DiffMatchPatch from 'diff-match-patch';
+
+const dmp = new DiffMatchPatch();
+
+
 
 class Editor extends Component {
   constructor(params) {
     super(params);
     this.state = {
       input: "Loading...",
-      existsInDatabase: false
+      existsInDatabase: false,
+      previousSavedText: "",
+      noteId: -1
     };
   }
 
   _saveNote() {
     if (this.state.existsInDatabase) {
-      console.log("UPDATING USING A PATCH");
+      const patchText = dmp.patch_toText(dmp.patch_make(this.state.previousSavedText, this.state.input));
+
+      query(`/api/note/${this.state.noteId}/`, "PATCH", {
+        diff: patchText
+      }).then((result) => {
+        console.log(result);
+      });
+      this.state.previousSavedText = this.state.input;
     }
     else {
       // Create a new note
@@ -28,7 +41,7 @@ class Editor extends Component {
         sharedWith: [],
         content: this.state.input
       }).then((result) => {
-        this.setState({ existsInDatabase: true });
+        this.setState({ existsInDatabase: true, noteId: result.id, previousSavedText: this.state.input });
       });
     }
   }
@@ -76,6 +89,15 @@ class Editor extends Component {
             }}
             onChange={(editor, data, value) => {
               this.setState({ input: value });
+
+              // Save when the user uses space, paste something, add a new line, delete a space or remove a lot of text (ctrl-backspace)
+              if (
+                (data.origin === "paste") ||
+                (data.text !== undefined && data.text[0] === " " || data.text.length === 2) ||
+                (data.removed !== undefined && (data.removed[0] === " " || (data.removed[0].length > 2 && data.origin === "+delete")))
+              ) {
+                this._saveNote();
+              }
             }}
           />
         </div>
