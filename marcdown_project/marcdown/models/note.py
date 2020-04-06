@@ -61,6 +61,8 @@ class Note(models.Model):
             # update tags
             self.parse_tags()
             
+            self.save();
+
             return True
         else:
             return False
