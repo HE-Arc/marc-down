@@ -96,7 +96,7 @@ class Note(models.Model):
         Returns: set of strings, containing the tags
         '''
         new_tags = set()
-        old_tags = set(map(lambda tag : tag.name, self.tags.all))
+        old_tags = set(map(lambda tag : tag.name, self.tags.all()))
 
         regex = r"^#{6} tags: (`[^`]+`(?:, `[^`]+`)*)$"
         for line in self.content.split('\n'):
