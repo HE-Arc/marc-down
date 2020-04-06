@@ -171,3 +171,7 @@ button {
     cursor: pointer;
     color: white;
 }
+
+#tags-list p {
+    cursor: pointer;
+}

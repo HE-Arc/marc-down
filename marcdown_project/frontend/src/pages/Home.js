@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Card from "../components/Card.js"
+import TagListItem from "../components/TagListItem.js"
 import query from "../helpers.js";
 
 class Home extends Component {
@@ -8,6 +9,8 @@ class Home extends Component {
     this.state = {
       ownCards: [],
       sharedCards: [],
+      tags: {},
+      tagSearchValue: ""
     };
 
     this._loadCards();
@@ -15,10 +18,28 @@ class Home extends Component {
 
   _loadCards() {
     query("/api/user").then((result) => {
-      console.log(result);
       this.setState({
         ownCards: result.own_notes,
         sharedCards: result.shared_notes,
+      });
+
+      const allNotes = result.own_notes.concat(result.shared_notes);
+      let tags = {};
+      for (let i = 0; i < allNotes.length; i++) {
+        const card = allNotes[i];
+        for (let j = 0; j < card.tags.length; j++) {
+          const tag = card.tags[j];
+          if (tags[tag.name] === undefined) {
+            tags[tag.name] = 1;
+          }
+          else {
+            tags[tag.name]++;
+          }
+        }
+      }
+
+      this.setState({
+        tags: tags
       });
     }).catch((err) => {
       console.error(err);
@@ -26,16 +47,20 @@ class Home extends Component {
     });
   }
 
+  _setSearchItem(tagName) {
+    this.setState({ tagSearchValue: tagName });
+  }
+
   render() {
     return (
       <div>
         <div id="tags-container">
           <span id="tags-header">Tags</span>
-          <input type="text" />
+          <input value={this.state.tagSearchValue} type="text" placeholder="Filter by tags" onChange={() => {}}/>
           <div id="tags-list">
-            <p>HE-Arc (2)</p>
-            <p>Test (4)</p>
-            <p>Games (1)</p>
+            {Object.keys(this.state.tags).map((key, index) =>
+              <TagListItem clickAction={(tagName) => {this._setSearchItem(tagName)}} key={index} count={this.state.tags[key]}>{key}</TagListItem>
+            )}
           </div>
         </div>
         <div id="note-container">
