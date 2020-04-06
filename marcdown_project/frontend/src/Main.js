@@ -21,9 +21,7 @@ class Main extends Component {
             <Route path="/note/:id"
               render={({ match }) => <Editor match={match} />}>
             </Route>
-            <PrivateRoute exact path="/">
-              <Home />
-            </PrivateRoute>
+            <PrivateRoute exact path="/" component={Home} />
           </Switch>
         </HashRouter>
       </div>
