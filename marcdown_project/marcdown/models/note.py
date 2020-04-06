@@ -49,7 +49,7 @@ class Note(models.Model):
         '''
         dmp = dmp_module.diff_match_patch()
         patch = dmp.patch_fromText(patch_text)
-        patched_content, results = dmp.patch_apply(self.content, patch)
+        patched_content, results = dmp.patch_apply(patch, self.content)
 
         if all(results):
             # patch is successfully applied
