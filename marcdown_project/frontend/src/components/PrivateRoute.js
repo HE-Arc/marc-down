@@ -18,15 +18,14 @@ class PrivateRoute extends Component {
         auth.loggedIn().then((result) => {
             if (result) {
                 this.setState({ toMainPage: true });
-            }
-            else {
+            } else {
                 this.setState({ toLogin: true });
             }
         });
     }
 
     render(...rest) {
-        if (this.state.toMainPage === true) {
+        if (this.state.toMainPage) {
             return <Route {...rest} render={(props) => (
                 <this.props.component {...props} />
             )} />

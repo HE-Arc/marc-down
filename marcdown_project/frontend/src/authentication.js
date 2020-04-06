@@ -11,15 +11,13 @@ class Authentication {
         return new Promise((resolve, reject) => {
             if (this._loaded) {
                 resolve();
-            }
-            else {
+            } else {
                 query("/api/user").then((result) => {
                     if (result.id !== -1) {
                         this._loggedIn = true;
                         this._username = result.name;
                         resolve();
-                    }
-                    else {
+                    } else {
                         reject();
                     }
                 }).catch((err) => {
@@ -37,8 +35,7 @@ class Authentication {
         return new Promise((resolve, reject) => {
             if (this._loaded) {
                 resolve(this._username);
-            }
-            else {
+            } else {
                 this._loadInfo().then(() => {
                     resolve(this._username);
                 });
@@ -50,8 +47,7 @@ class Authentication {
         return new Promise((resolve, reject) => {
             if (this._loaded) {
                 resolve(this._loggedIn);
-            }
-            else {
+            } else {
                 this._loadInfo().then(() => {
                     resolve(this._loggedIn);
                 });
