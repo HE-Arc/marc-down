@@ -107,6 +107,8 @@ class NoteViewSet(viewsets.ViewSet):
                 if diff:
                     if not note.update(diff):
                         return JsonResponse(status=status.HTTP_422_UNPROCESSABLE_ENTITY, data={"status" : "false", "message" : "Given diff could not be applied"})
+                    else:
+                        return JsonResponse(status=status.HTTP_200_OK, data={})
                 else:
                     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, data={"status" : "false", "message" : "Missing `diff` data in request"})
             else:
