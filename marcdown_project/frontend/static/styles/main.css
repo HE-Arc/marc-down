@@ -1,5 +1,6 @@
 :root {
     --background-color: #333;
+    --background-color-dark: #222;
     --background-color-darker: #111;
     --text-color: #fefefe;
     --color-link: #2C7EEA;
@@ -77,10 +78,8 @@ nav ul li a.active {
     left: calc(50% - 5px);
     /* 40px padding - 5px from left */
     width: calc(50% - 35px);
-
     color: black;
     padding: 20px;
-
     overflow-y: auto;
 }
 
@@ -99,4 +98,75 @@ button {
     padding-right: 20px;
     border: none;
     background-color: var(--color-primary);
+}
+
+#tags-container {
+    position: fixed;
+    width: 200px;
+    top: 64px;
+    bottom: 0;
+    padding: 20px;
+    background-color: var(--background-color-dark);
+}
+
+#note-container {
+    /* 200 + 40 + 20px margin */
+    margin-left: 260px;
+    top: 64px;
+    overflow: auto;
+    bottom: 0;
+    position: fixed;
+}
+
+.note-card .title {
+    font-size: 1.3em;
+    max-width: 200px;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-card .note-tag {
+    color: #aaa;
+    margin-right: 20px;;
+}
+
+.note-card .note-star {
+    float: right;
+}
+
+.note-card .note-owner {
+    bottom: 15px;
+    right: 20px;
+    position: absolute;
+}
+
+#tags-list {
+    padding-top: 15px;
+}
+
+#tags-list p {
+    color: #aaa;
+    margin: 0px;
+}
+
+#tags-header {
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.note-card {
+    display: inline-block;
+    background-color: var(--background-color-darker);
+    padding: 20px;
+    width: 250px;
+    border-radius: 2px;
+    height: 120px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
 }
