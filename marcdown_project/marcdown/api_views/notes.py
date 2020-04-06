@@ -51,9 +51,9 @@ class NoteViewSet(viewsets.ViewSet):
                 except:
                     bad_sharers.append(sharer_name)
             note.save()
-            return JsonResponse(status=status.HTTP_200_OK, data={"status" : "true", "id": note.id, "badSharerNames" : bad_sharers})
+            return JsonResponse(status=status.HTTP_200_OK, data={"status" : True, "id": note.id, "badSharerNames" : bad_sharers})
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
             pass
     
     # update (public, readonly, sharers)
@@ -83,11 +83,11 @@ class NoteViewSet(viewsets.ViewSet):
                         except:
                             bad_sharers.append(sharer_name)
                 note.save()
-                return JsonResponse(status=status.HTTP_200_OK, data={"status" : "true", "badSharerNames" : bad_sharers})
+                return JsonResponse(status=status.HTTP_200_OK, data={"status" : True, "badSharerNames" : bad_sharers})
             else:
-                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : False, "message" : "You are not allowed to edit this note"})
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
 
     # patch (diff)
     # needs auth
@@ -106,15 +106,15 @@ class NoteViewSet(viewsets.ViewSet):
                 diff = data.get("diff", None)
                 if diff:
                     if not note.update(diff):
-                        return JsonResponse(status=status.HTTP_422_UNPROCESSABLE_ENTITY, data={"status" : "false", "message" : "Given diff could not be applied"})
+                        return JsonResponse(status=status.HTTP_422_UNPROCESSABLE_ENTITY, data={"status" : False, "message" : "Given diff could not be applied"})
                     else:
                         return JsonResponse(status=status.HTTP_200_OK, data={})
                 else:
-                    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, data={"status" : "false", "message" : "Missing `diff` data in request"})
+                    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, data={"status" : False, "message" : "Missing `diff` data in request"})
             else:
-                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : False, "message" : "You are not allowed to edit this note"})
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
     
     def destroy(self, request, pk=None):
         '''
@@ -130,6 +130,6 @@ class NoteViewSet(viewsets.ViewSet):
                 note.delete()
                 return JsonResponse(status=status.HTTP_200_OK)
             else:
-                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : "false", "message" : "You are not allowed to edit this note"})
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : False, "message" : "You are not allowed to edit this note"})
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})

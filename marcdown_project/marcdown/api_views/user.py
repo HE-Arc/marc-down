@@ -19,7 +19,7 @@ class UserViewSet(viewsets.ViewSet):
             serializer = ProfileSerializer(user.profile)
             return JsonResponse(serializer.data)
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
             pass
 
     @action(detail=False, methods=['post'])
@@ -37,7 +37,7 @@ class UserViewSet(viewsets.ViewSet):
                 profile.favorites.add(note)
                 # TODO: return updated user.get_tags() ??
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
     
     @favorites.mapping.delete
     def remove_favorite(self, request):
@@ -53,4 +53,4 @@ class UserViewSet(viewsets.ViewSet):
             profile.favorites.remove(note)
             # TODO: return updated user.get_tags() ??
         else:
-            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : "false", "message" : "Authentication is required"})
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
