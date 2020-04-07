@@ -31,12 +31,22 @@ class Editor extends Component {
             redirectToMainPage: false
         };
 
+        this.codemirror = {
+            lastKnownPos: undefined,
+            editor: undefined
+        };
+
+        this.saveInterval = -1;
+
         this.modal = React.createRef();
     }
 
     _saveNote() {
         if (this.state.existsInDatabase) {
             const patchText = dmp.patch_toText(dmp.patch_make(this.state.previousSavedText, this.state.input));
+            if (patchText === "") {
+                return;
+            }
 
             query(`/api/note/${this.state.noteId}/`, "PATCH", {
                 diff: patchText
@@ -53,10 +63,27 @@ class Editor extends Component {
                 sharedWith: this.state.sharedWith,
                 content: this.state.input
             }).then((result) => {
-                location.hash = `/note/${result.id}`;
-                this.setState({ existsInDatabase: true, noteId: result.id, previousSavedText: this.state.input });
+                if (result.id !== undefined) {
+                    location.hash = `/note/${result.id}`;
+                    this.setState({ existsInDatabase: true, noteId: result.id, previousSavedText: this.state.input });
+                }
+                else {
+                    this.setState({ readOnly: true, isOwner: false, defaultInput: "# You are not logged in!\n\nClick [here](/login) to go to the login page.\n\n\n\n(Yes you can still type, but it won't be saved)\n\n---\n" });
+                }
             });
         }
+    }
+
+    restartTimer() {
+        clearTimeout(this.saveInterval);
+        this.saveInterval = setTimeout(() => {
+            this._saveNote();
+        }, 1000);
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.saveInterval);
+        this._saveNote();
     }
 
     _setReadOnly(readOnly) {
@@ -96,9 +123,13 @@ class Editor extends Component {
 
         query(`/api/note/${this.state.noteId}/`, "PUT", {
             sharedWith: newSharedArray
-        }).then((result) => {});
+        }).then((result) => { });
 
         this.setState({ sharedWith: newSharedArray });
+    }
+
+    _appendText(text) {
+        this.codemirror.editor.replaceRange(text, this.codemirror.lastKnownPos);
     }
 
     _deleteNote() {
@@ -140,6 +171,8 @@ class Editor extends Component {
     }
 
     componentDidMount() {
+        this.restartTimer();
+
         if (this.props.match.params.id === "new") {
             this.setState({ defaultInput: "# Note name\n\n###### tags: `untagged`" });
         } else {
@@ -156,9 +189,9 @@ class Editor extends Component {
             <div>
                 <div id="editor">
                     <div id="editor-tools">
-                        <span><button className="text-button">Bold</button></span>
-                        <span><button className="text-button">Italic</button></span>
-                        <span><button className="text-button">Link</button></span>
+                        <span><button onClick={() => { this._appendText("[](url)") }} className="text-button">Link</button></span>
+                        <span><button onClick={() => { this._appendText("![](url)") }} className="text-button">Image</button></span>
+                        <span><button onClick={() => { this._appendText("###### tags: `untagged`") }} className="text-button">Tags</button></span>
                         {this.state.isOwner ?
                             <span className="right">
                                 <button onClick={() => { this.modal.current.display(); }} className="text-button">
@@ -174,9 +207,15 @@ class Editor extends Component {
                             theme: "material",
                             lineNumbers: true,
                         }}
+                        onCursor={(editor, data) => {
+                            this.codemirror = {
+                                lastKnownPos: data,
+                                editor: editor
+                            };
+                        }}
                         onChange={(editor, data, value) => {
                             this.setState({ input: value });
-
+                            this.restartTimer();
                             // Save when the user uses space, paste something, add a new line, delete a space or remove a lot of text (ctrl-backspace)
                             if (
                                 (data.origin === "paste") ||
@@ -188,8 +227,10 @@ class Editor extends Component {
                         }}
                     />
                 </div>
-                <div id="md-render">
-                    <ReactMarkdown source={this.state.input} />
+                <div id="md-render" className={this.state.readOnly && !this.state.isOwner ? "read-only" : ""}>
+                    <ReactMarkdown
+                        source={this.state.input}
+                    />
                 </div>
                 <Modal ref={this.modal}>
                     <span className="header">Permissions</span>

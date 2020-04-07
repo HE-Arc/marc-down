@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import {
   NavLink,
+  Link,
 } from "react-router-dom";
 import { HashRouter } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -24,7 +25,7 @@ class Nav extends Component {
               <NavItem url="/note/new">New Note</NavItem>
             </li>
             <li>
-              <NavItem url="/logout">Logout</NavItem>
+              <a href="/logout">Logout</a>
             </li>
           </ul>
         </nav>

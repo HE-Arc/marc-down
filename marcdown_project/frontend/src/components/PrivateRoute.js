@@ -21,7 +21,7 @@ class PrivateRoute extends Component {
             } else {
                 this.setState({ toLogin: true });
             }
-        });
+        }).catch((e) => { console.log })
     }
 
     render(...rest) {

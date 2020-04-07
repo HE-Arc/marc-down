@@ -13,13 +13,12 @@ class Authentication {
                 resolve();
             } else {
                 query("/api/user").then((result) => {
-                    if (result.id !== -1) {
+                    if (result.id !== undefined) {
                         this._loggedIn = true;
                         this._username = result.name;
-                        resolve();
-                    } else {
-                        reject();
                     }
+
+                    resolve();
                 }).catch((err) => {
                     console.error(err);
                     reject();
@@ -50,7 +49,7 @@ class Authentication {
             } else {
                 this._loadInfo().then(() => {
                     resolve(this._loggedIn);
-                });
+                }).catch(console.error)
             }
         });
     }
