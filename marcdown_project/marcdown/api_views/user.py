@@ -31,7 +31,7 @@ class UserViewSet(viewsets.ViewSet):
         '''
         user = request.user
         if user.is_authenticated:
-            note_id = getattr(request.data, "noteId", -1)
+            note_id = request.data.get("noteId", -1)
             queryset = Note.objects.all()
             note = get_object_or_404(queryset, id=note_id)
 
@@ -48,7 +48,7 @@ class UserViewSet(viewsets.ViewSet):
         '''
         user = request.user
         if user.is_authenticated:
-            note_id = getattr(request.data, "noteId", -1)
+            note_id = request.data.get("noteId", -1)
             queryset = Note.objects.all()
             note = get_object_or_404(queryset, id=note_id)
 
