@@ -15,8 +15,7 @@ export default function query(url, verb = "GET", body = undefined) {
         mode: "cors",
         cache: "no-cache",
         credentials: "same-origin",
-        redirect: "follow",
-        referrerPolicy: "no-referrer",
+        redirect: "follow"
     };
 
     // Get cannot have a body, but we want to easily be able to use an object in the parameters
