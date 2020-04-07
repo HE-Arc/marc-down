@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("marcdown.urls", namespace="marcdown")),
     path('login/', auth_views.LoginView.as_view(), {'template_name' : 'registration/login.html'}),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/login')),
     path('register/', register),
     path('', include('frontend.urls'))
 ]
