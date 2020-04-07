@@ -18,12 +18,21 @@ class NoteViewSet(viewsets.ViewSet):
         and responds with its description and content
         '''
         user = request.user
+        if user.is_authenticated:
+            queryset = Note.objects.all()
+            note = get_object_or_404(queryset, id=pk)
 
-        queryset = Note.objects.all()
-        note = get_object_or_404(queryset, id=pk)
-        note.is_owner = note.is_owner(user)
-        serializer = NoteSerializer(note)
-        return JsonResponse(serializer.data)
+            if note.allow_reading_by_user(user):
+                note.is_owner = note.is_owner(user)
+                serializer = NoteSerializer(note)
+                
+                return JsonResponse(serializer.data)
+            else:
+                return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : False, "message" : "You are not allowed to read this note"})
+        else:
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
+
+
     
     # post (public = True, readonly = False, sharers = [])
     # needs auth
