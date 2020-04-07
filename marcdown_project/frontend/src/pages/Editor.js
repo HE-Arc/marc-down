@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2"
+import { Route, Redirect, BrowserRouter } from "react-router-dom";
+
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import "../../static/styles/code-mirror.css"
@@ -25,7 +27,8 @@ class Editor extends Component {
             readOnly: false,
             isOwner: true,
             inputSharer: "",
-            sharedWith: []
+            sharedWith: [],
+            redirectToMainPage: false
         };
 
         this.modal = React.createRef();
@@ -96,6 +99,14 @@ class Editor extends Component {
         this.setState({ sharedWith: newSharedArray });
     }
 
+    _deleteNote() {
+        if (confirm("Delete this note?")) {
+            query(`/api/note/${this.state.noteId}/`, "DELETE").then((result) => {
+                this.setState({ redirectToMainPage: true });
+            });
+        }
+    }
+
     _loadFromDatabase(id) {
         id = parseInt(id);
 
@@ -135,6 +146,10 @@ class Editor extends Component {
     }
 
     render() {
+        if (this.state.redirectToMainPage) {
+            return <Route><Redirect to="/" /></Route>
+        }
+
         return (
             <div>
                 <div id="editor">
@@ -175,18 +190,27 @@ class Editor extends Component {
                     <ReactMarkdown source={this.state.input} />
                 </div>
                 <Modal ref={this.modal}>
-                    <h1>Permissions</h1>
+                    <span className="header">Permissions</span>
                     <p><label><input type="checkbox" defaultChecked={this.state.public} onChange={(e) => { this._setPublic(e.target.checked) }} /> Public (everyone can see and edit)</label></p>
                     <p><label><input type="checkbox" defaultChecked={this.state.readOnly} onChange={(e) => { this._setReadOnly(e.target.checked) }} /> Read only (only you can edit)</label></p>
-                    <h1>Shared with</h1>
-                    <p>Click on a username to remove it from the list</p>
-                    <input value={this.state.inputSharer} type="text" placeholder="Username" onChange={(e) => { this.setState({ inputSharer: e.target.value }) }}></input><button onClick={() => { this._addSharedUser() }} className="share-button">Share</button>
+
+                    <span className="header">Shared with</span>
+                    <p>
+                        <input value={this.state.inputSharer} type="text" placeholder="Username" onChange={(e) => { this.setState({ inputSharer: e.target.value }) }}></input>
+                        <button onClick={() => { this._addSharedUser() }} className="share-button">Share</button>
+                    </p>
                     <div className="user-list-container">
+                        <p>Click on a username to remove it from the list: </p>
                         {this.state.sharedWith.map((username, key) =>
                             <span onClick={() => { this._removeSharedUser(username); }} key={key} className="shared-with">{username}</span>
                         )}
                         {this.state.sharedWith.length === 0 ? <p>Not shared with anyone</p> : ""}
                     </div>
+
+                    <span className="header">Advanced</span>
+                    <p>
+                        <button onClick={() => { this._deleteNote() }} className="danger">Delete this note</button>
+                    </p>
                 </Modal>
             </div >
         );

@@ -269,13 +269,17 @@ button.text-button {
     cursor: default;
 }
 
+.modal p {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
 button.share-button {
     margin-left: 20px;
 }
 
 .user-list-container {
     margin-top: 10px;
-    border-top: 1px solid #222;
 }
 
 span.shared-with {
@@ -284,5 +288,16 @@ span.shared-with {
     margin-right: 20px;
     border-radius: 2px;
     display: inline-block;
-    margin-top: 10px;
+}
+
+.danger {
+    background-color: #ff0039;
+}
+
+.header {
+    font-size: 1.2em;
+    font-weight: bold;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }

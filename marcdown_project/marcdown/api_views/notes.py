@@ -131,7 +131,7 @@ class NoteViewSet(viewsets.ViewSet):
 
             if user.profile == note.owner:
                 note.delete()
-                return JsonResponse(status=status.HTTP_200_OK)
+                return JsonResponse(status=status.HTTP_200_OK, data={})
             else:
                 return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : False, "message" : "You are not allowed to edit this note"})
         else:
