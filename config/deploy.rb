@@ -9,10 +9,11 @@ after 'deploy:publishing', 'uwsgi:restart'
 after 'deploy:updating', 'python:applychanges'
 after 'deploy:updating', 'python:create_venv'
 after 'deploy:updating', 'python:migrate'
-after 'deploy:updating', 'python:collectstatic'
 
 after 'deploy:updating', 'node:install'
 after 'deploy:updating', 'node:build'
+
+after 'deploy:updating', 'python:collectstatic'
 
 namespace :uwsgi do
 	desc 'Restart application'
