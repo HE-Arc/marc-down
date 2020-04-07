@@ -40,14 +40,17 @@ class Editor extends Component {
 
             query(`/api/note/${this.state.noteId}/`, "PATCH", {
                 diff: patchText
-            }).then((result) => { });
+            }).then((result) => { }).catch(() => {
+                alert("Something went wrong when updating the note. You may be out of sync, the page will be reloaded.");
+                location.reload();
+            });
             this.state.previousSavedText = this.state.input;
         } else {
             // Create a new note
             query(`/api/note/`, "POST", {
-                public: false,
-                readOnly: false,
-                sharedWith: [],
+                public: this.state.public,
+                readOnly: this.state.readOnly,
+                sharedWith: this.state.sharedWith,
                 content: this.state.input
             }).then((result) => {
                 location.hash = `/note/${result.id}`;
@@ -93,8 +96,7 @@ class Editor extends Component {
 
         query(`/api/note/${this.state.noteId}/`, "PUT", {
             sharedWith: newSharedArray
-        }).then((result) => {
-        });
+        }).then((result) => {});
 
         this.setState({ sharedWith: newSharedArray });
     }
@@ -139,7 +141,7 @@ class Editor extends Component {
 
     componentDidMount() {
         if (this.props.match.params.id === "new") {
-            this.setState({ defaultInput: "# Note name\n\n" });
+            this.setState({ defaultInput: "# Note name\n\n###### tags: `untagged`" });
         } else {
             this._loadFromDatabase(this.props.match.params.id);
         }
