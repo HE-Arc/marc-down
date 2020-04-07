@@ -35,9 +35,8 @@ class UserViewSet(viewsets.ViewSet):
             queryset = Note.objects.all()
             note = get_object_or_404(queryset, id=note_id)
 
-            if note.allow_reading_by_user(profile):
-                profile.favorites.add(note)
-                # TODO: return updated user.get_tags() ??
+            if note.allow_reading_by_user(user.profile):
+                user.profile.favorites.add(note)
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
     
@@ -52,7 +51,6 @@ class UserViewSet(viewsets.ViewSet):
             queryset = Note.objects.all()
             note = get_object_or_404(queryset, id=note_id)
 
-            profile.favorites.remove(note)
-            # TODO: return updated user.get_tags() ??
+            user.profile.favorites.remove(note)
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
