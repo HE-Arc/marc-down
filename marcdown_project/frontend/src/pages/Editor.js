@@ -24,6 +24,7 @@ class Editor extends Component {
             public: false,
             readOnly: false,
             isOwner: true,
+            inputSharer: "",
             sharedWith: []
         };
 
@@ -66,8 +67,33 @@ class Editor extends Component {
         this.setState({ public: isPublic });
     }
 
-    _addSharedUser(username) {
-        this.setState({ sharedWith: [...this.state.sharedWith, username] });
+    _addSharedUser() {
+        let newSharedArray = [...this.state.sharedWith, this.state.inputSharer];
+        this.setState({ inputSharer: "" });
+
+        query(`/api/note/${this.state.noteId}/`, "PUT", {
+            sharedWith: newSharedArray
+        }).then((result) => {
+            // Remove bad sharers and update
+            if (result.badSharerNames.length > 0) {
+                this.setState({ inputSharer: "User not found" });
+                newSharedArray.splice(newSharedArray.indexOf(result.badSharerNames), 1);
+            }
+
+            this.setState({ sharedWith: newSharedArray });
+        });
+    }
+
+    _removeSharedUser(index) {
+        let newSharedArray = this.state.sharedWith;
+        newSharedArray.splice(index, 1);
+
+        query(`/api/note/${this.state.noteId}/`, "PUT", {
+            sharedWith: newSharedArray
+        }).then((result) => {
+        });
+
+        this.setState({ sharedWith: newSharedArray });
     }
 
     _loadFromDatabase(id) {
@@ -80,6 +106,8 @@ class Editor extends Component {
                 if (result.id === undefined) {
                     this.setState({ defaultInput: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
                 } else {
+                    const sharedWith = result.sharers.map(r => r.name);
+
                     this.setState({
                         defaultInput: result.content,
                         existsInDatabase: true,
@@ -87,10 +115,12 @@ class Editor extends Component {
                         noteId: id,
                         isOwner: result.is_owner,
                         public: result.public,
-                        readOnly: result.read_only
+                        readOnly: result.read_only,
+                        sharedWith: sharedWith
                     });
                 }
             }).catch((error) => {
+                console.log(error);
                 this.setState({ defaultInput: "# Could not load this note\n\nMake sure you are connected to the internet\n\nEdit this note to create a new one" });
             });
         }
@@ -150,13 +180,15 @@ class Editor extends Component {
                     <p><label><input type="checkbox" defaultChecked={this.state.readOnly} onChange={(e) => { this._setReadOnly(e.target.checked) }} /> Read only (only you can edit)</label></p>
                     <h1>Shared with</h1>
                     <p>Click on a username to remove it from the list</p>
-                    <input type="text" placeholder="Username"></input><button className="share-button">Share</button>
+                    <input value={this.state.inputSharer} type="text" placeholder="Username" onChange={(e) => { this.setState({ inputSharer: e.target.value }) }}></input><button onClick={() => { this._addSharedUser() }} className="share-button">Share</button>
                     <div className="user-list-container">
-                        <span className="shared-with">ToyBla</span>
-                        <span className="shared-with">WizzyG</span>
+                        {this.state.sharedWith.map((username, key) =>
+                            <span onClick={() => { this._removeSharedUser(username); }} key={key} className="shared-with">{username}</span>
+                        )}
+                        {this.state.sharedWith.length === 0 ? <p>Not shared with anyone</p> : ""}
                     </div>
                 </Modal>
-            </div>
+            </div >
         );
     }
 }
