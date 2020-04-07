@@ -31,7 +31,7 @@ except:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['marcdown.srvz-webapp.he-arc.ch', 'localhost']
 
 
 # Application definition
@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'marcdown'
+    'rest_framework',
+    'marcdown',
+    'frontend'
 ]
 
 MIDDLEWARE = [

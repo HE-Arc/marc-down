@@ -116,3 +116,4 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 
+marcdown_project/frontend/static/frontend/main.js
