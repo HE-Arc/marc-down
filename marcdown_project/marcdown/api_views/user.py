@@ -6,7 +6,9 @@ from rest_framework.decorators import action
 from rest_framework import status
 
 from django.contrib.auth.models import User
+from marcdown.models import Note, Profile
 from marcdown.serializers import ProfileSerializer
+from django.shortcuts import get_object_or_404
 
 class UserViewSet(viewsets.ViewSet):
     # get
@@ -29,13 +31,13 @@ class UserViewSet(viewsets.ViewSet):
         '''
         user = request.user
         if user.is_authenticated:
-            note_id = getattr(request.data, "noteId", -1)
+            note_id = request.data.get("noteId", -1)
             queryset = Note.objects.all()
             note = get_object_or_404(queryset, id=note_id)
 
-            if note.allow_reading_by_user(profile):
-                profile.favorites.add(note)
-                # TODO: return updated user.get_tags() ??
+            if note.allow_reading_by_user(user.profile):
+                user.profile.favorites.add(note)
+                return JsonResponse(status=status.HTTP_200_OK, data={})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
     
@@ -46,11 +48,11 @@ class UserViewSet(viewsets.ViewSet):
         '''
         user = request.user
         if user.is_authenticated:
-            note_id = getattr(request.data, "noteId", -1)
+            note_id = request.data.get("noteId", -1)
             queryset = Note.objects.all()
             note = get_object_or_404(queryset, id=note_id)
 
-            profile.favorites.remove(note)
-            # TODO: return updated user.get_tags() ??
+            user.profile.favorites.remove(note)
+            return JsonResponse(status=status.HTTP_200_OK, data={})
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})

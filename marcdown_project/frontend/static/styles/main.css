@@ -116,6 +116,7 @@ button {
     overflow: auto;
     bottom: 0;
     position: fixed;
+    padding-bottom: 20px;
 }
 
 .note-card .title {
@@ -130,11 +131,16 @@ button {
 
 .note-card .note-tag {
     color: #aaa;
-    margin-right: 20px;;
+    margin-right: 20px;
+    ;
 }
 
 .note-card .note-star {
     float: right;
+    z-index: 4;
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
 .note-card .note-owner {
@@ -169,4 +175,48 @@ button {
     vertical-align: middle;
     position: relative;
     cursor: pointer;
+    color: white;
+}
+
+#tags-list p {
+    cursor: pointer;
+}
+
+#input-search-note {
+    width: 50%;
+}
+
+.starbox {
+    display: none;
+}
+
+.starbox:checked {
+    border: none;
+    background-color: var(--color-secondary);
+}
+
+.starbox+span {
+    background-size: cover;
+    right: 5px;
+    top: 5px;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+}
+
+.starbox:checked+span {
+    background: url("/static/images/star-checked.png");
+}
+
+.starbox:not(:checked)+span {
+    background: url("/static/images/star.png");
+}
+
+.wrap-link {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    top: 0;
+    z-index: 1;
 }
