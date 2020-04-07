@@ -6,7 +6,9 @@ from rest_framework.decorators import action
 from rest_framework import status
 
 from django.contrib.auth.models import User
+from marcdown.models import Note, Profile
 from marcdown.serializers import ProfileSerializer
+from django.shortcuts import get_object_or_404
 
 class UserViewSet(viewsets.ViewSet):
     # get
