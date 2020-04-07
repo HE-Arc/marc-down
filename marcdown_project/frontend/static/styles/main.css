@@ -269,3 +269,21 @@ button.text-button {
     cursor: default;
 }
 
+button.share-button {
+    margin-left: 20px;
+}
+
+.user-list-container {
+    height: 50px; 
+    margin-top: 10px;
+    border-top: 1px solid #222;
+}
+
+span.shared-with {
+    padding: 10px;
+    background-color: #222;
+    margin-right: 20px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-top: 10px;
+}
