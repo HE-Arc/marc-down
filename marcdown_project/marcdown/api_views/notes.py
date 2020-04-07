@@ -17,8 +17,11 @@ class NoteViewSet(viewsets.ViewSet):
         Gets the note corresponding to the given id,
         and responds with its description and content
         '''
+        user = request.user
+
         queryset = Note.objects.all()
         note = get_object_or_404(queryset, id=pk)
+        note.is_owner = note.is_owner(user)
         serializer = NoteSerializer(note)
         return JsonResponse(serializer.data)
     

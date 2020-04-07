@@ -21,6 +21,9 @@ class Note(models.Model):
     def __str__(self):
         return self.title
     
+    def is_owner(self, user):
+        return hasattr(user, 'profile') and self.owner == user.profile
+
     def allow_reading_by_user(self, profile):
         '''
         Returns whether the given user has read permission on the note
