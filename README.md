@@ -4,9 +4,12 @@
 
 Write and save markdown notes online
 
-# Installation
-## Development
+## Installation
+
+### Development
+
 Create and activate a virtual environment:
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -18,7 +21,7 @@ pip install -r requirements.txt
 # Apply migrations
 python marcdown_project/manage.py migrate
 # Run the server
-python marcdown_project/manage.py runserver 
+python marcdown_project/manage.py runserver
 ```
 
 ```bash
@@ -29,4 +32,18 @@ npm install
 
 # "Compile" js files
 npm run dev
+```
+
+### Production
+
+Adapt the `deploy.sh` script to suit your server's settings, as well as the Capistrano config files in `config`. Then, run
+
+```bash
+cap production deploy
+```
+
+If you want to deploy a branch other than `master`, run
+
+```bash
+cap production deploy BRANCH=branch-name
 ```

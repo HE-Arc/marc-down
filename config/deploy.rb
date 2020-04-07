@@ -5,8 +5,15 @@ set :application, "marcdown"
 set :repo_url, "https://github.com/HE-Arc/marc-down.git"
 
 after 'deploy:publishing', 'uwsgi:restart'
+
+after 'deploy:updating', 'python:applychanges'
 after 'deploy:updating', 'python:create_venv'
 after 'deploy:updating', 'python:migrate'
+
+after 'deploy:updating', 'node:install'
+after 'deploy:updating', 'node:build'
+
+after 'deploy:updating', 'python:collectstatic'
 
 namespace :uwsgi do
 	desc 'Restart application'
@@ -20,6 +27,13 @@ end
 namespace :python do
 	def venv_path
 		File.join(shared_path, 'env')
+	end
+
+	desc 'Apply changes specific to the server'
+	task :applychanges do
+		on roles([:app, :web]) do |h|
+			execute "bash #{release_path}/deploy.sh"
+		end
 	end
 
 	desc 'Create venv'
@@ -37,10 +51,38 @@ namespace :python do
 			execute "#{venv_path}/bin/python #{release_path}/marcdown_project/manage.py migrate"
 		end
 	end
+
+	desc 'Collect static files'
+	task :collectstatic do
+		on roles([:app, :web]) do |h|
+			execute "#{venv_path}/bin/python #{release_path}/marcdown_project/manage.py collectstatic --noinput"
+		end
+	end
+end
+
+namespace :node do
+	def package_path
+		File.join(release_path, 'marcdown_project/frontend')
+	end
+
+	desc 'Install node packages'
+	task :install do
+		on roles([:app, :web]) do |h|
+			execute "npm --prefix #{package_path} install #{package_path}"
+		end
+	end
+
+	desc '"Compile" the JS'
+	task :build do
+		on roles([:app, :web]) do |h|
+			execute "npm --prefix #{package_path} run build"
+		end
+	end
 end
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+set :branch, ENV['BRANCH'] if ENV['BRANCH']
 
 # Default deploy_to directory is /var/www/my_app_name
 # set :deploy_to, "/var/www/my_app_name"
