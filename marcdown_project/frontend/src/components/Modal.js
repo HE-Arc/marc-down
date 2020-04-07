@@ -24,9 +24,7 @@ export default class Modal extends Component {
 
     hideOnClick(e) {
         if (e.target.classList.contains("modal-background")) {
-            this.setState({
-                displayed: false
-            });
+            this.hide();
         }
     }
 

@@ -22,7 +22,7 @@ class Note(models.Model):
         return self.title
     
     def is_owner(self, user):
-        return hasattr(user, 'profile') and self.owner == user.profile
+        return user.is_authenticated and self.owner == user.profile
 
     def allow_reading_by_user(self, profile):
         '''
