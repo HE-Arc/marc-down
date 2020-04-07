@@ -76,6 +76,12 @@ class Editor extends Component {
     return (
       <div>
         <div id="editor">
+          <div id="editor-tools">
+            <span><button className="text-button">Bold</button></span>
+            <span><button className="text-button">Italic</button></span>
+            <span><button className="text-button">Link</button></span>
+            <span className="right"><button className="text-button">Manage Permissions</button></span>
+          </div>
           <CodeMirror
             value={this.state.defaultInput}
             options={{

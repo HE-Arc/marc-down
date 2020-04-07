@@ -92,6 +92,7 @@ input, button {
 }
 
 button {
+    cursor: pointer;
     color: var(--text-color);
     padding: 10px;
     padding-left: 20px;
@@ -219,4 +220,29 @@ button {
     height: 100%;
     top: 0;
     z-index: 1;
+}
+
+#editor-tools {
+    height: 40px;
+    line-height: 40px;
+}
+
+#editor-tools span {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+button.text-button {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.separator {
+    border-left: 1px solid white;
+}
+
+#editor-tools .right {
+    float: right;
+    margin-right: 0px;
 }
