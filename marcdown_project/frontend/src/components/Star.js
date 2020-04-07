@@ -19,10 +19,9 @@ export default class Star extends Component {
     }
 
     render(...rest) {
-        let id = Math.floor(Math.random() * 10000);
         return (
-            <label htmlFor={"star_" + id} className="note-star">
-                <input id={"star_" + id} defaultChecked={this.state.starred} className="note-star starbox" type="checkbox" onChange={(e) => { this._updateStarred(e.target.checked) }} />
+            <label className="note-star">
+                <input defaultChecked={this.state.starred} className="note-star starbox" type="checkbox" onChange={(e) => { this._updateStarred(e.target.checked) }} />
                 <span></span>
             </label>
         );
