@@ -31,6 +31,11 @@ class Editor extends Component {
             redirectToMainPage: false
         };
 
+        this.codemirror = {
+            lastKnownPos: undefined,
+            editor: undefined
+        };
+
         this.modal = React.createRef();
     }
 
@@ -96,9 +101,13 @@ class Editor extends Component {
 
         query(`/api/note/${this.state.noteId}/`, "PUT", {
             sharedWith: newSharedArray
-        }).then((result) => {});
+        }).then((result) => { });
 
         this.setState({ sharedWith: newSharedArray });
+    }
+
+    _appendText(text) {
+        this.codemirror.editor.replaceRange(text, this.codemirror.lastKnownPos);
     }
 
     _deleteNote() {
@@ -156,9 +165,9 @@ class Editor extends Component {
             <div>
                 <div id="editor">
                     <div id="editor-tools">
-                        <span><button className="text-button">Bold</button></span>
-                        <span><button className="text-button">Italic</button></span>
-                        <span><button className="text-button">Link</button></span>
+                        <span><button onClick={() => { this._appendText("[](url)") }} className="text-button">Link</button></span>
+                        <span><button onClick={() => { this._appendText("![](url)") }} className="text-button">Image</button></span>
+                        <span><button onClick={() => { this._appendText("###### tags: `untagged`") }} className="text-button">Tags</button></span>
                         {this.state.isOwner ?
                             <span className="right">
                                 <button onClick={() => { this.modal.current.display(); }} className="text-button">
@@ -173,6 +182,12 @@ class Editor extends Component {
                             mode: "md",
                             theme: "material",
                             lineNumbers: true,
+                        }}
+                        onCursor={(editor, data) => {
+                            this.codemirror = {
+                                lastKnownPos: data,
+                                editor: editor
+                            };
                         }}
                         onChange={(editor, data, value) => {
                             this.setState({ input: value });
