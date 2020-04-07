@@ -17,8 +17,11 @@ class NoteViewSet(viewsets.ViewSet):
         Gets the note corresponding to the given id,
         and responds with its description and content
         '''
+        user = request.user
+
         queryset = Note.objects.all()
         note = get_object_or_404(queryset, id=pk)
+        note.is_owner = note.is_owner(user)
         serializer = NoteSerializer(note)
         return JsonResponse(serializer.data)
     
@@ -72,10 +75,10 @@ class NoteViewSet(viewsets.ViewSet):
                 note.public = data.get("public", note.public)
                 note.read_only = data.get("readOnly", note.read_only)
                 new_sharers_names = data.get("sharedWith", None)
-                if new_sharers_names:
+                bad_sharers = []
+                if new_sharers_names is not None:
                     note.sharers.set([])
 
-                    bad_sharers = []
                     for sharer_name in new_sharers_names:
                         try:
                             sharer = User.objects.get(username=sharer_name).profile
@@ -128,7 +131,7 @@ class NoteViewSet(viewsets.ViewSet):
 
             if user.profile == note.owner:
                 note.delete()
-                return JsonResponse(status=status.HTTP_200_OK)
+                return JsonResponse(status=status.HTTP_200_OK, data={})
             else:
                 return JsonResponse(status=status.HTTP_403_FORBIDDEN, data={"status" : False, "message" : "You are not allowed to edit this note"})
         else:

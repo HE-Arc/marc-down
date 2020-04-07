@@ -22,4 +22,4 @@ class NoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Note
-        fields = ['id', 'title', 'content', 'owner', 'public', 'read_only', 'sharers', 'tags']
+        fields = ['id', 'title', 'content', 'owner', 'public', 'read_only', 'sharers', 'tags', 'is_owner']

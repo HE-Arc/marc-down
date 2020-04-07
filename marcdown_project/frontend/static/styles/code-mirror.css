@@ -1,4 +1,4 @@
 
 .CodeMirror, .react-codemirror2 {
-    height: 100%;
+    height: calc(100% - 20px);
 }

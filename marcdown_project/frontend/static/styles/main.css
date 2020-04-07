@@ -92,6 +92,7 @@ input, button {
 }
 
 button {
+    cursor: pointer;
     color: var(--text-color);
     padding: 10px;
     padding-left: 20px;
@@ -219,4 +220,84 @@ button {
     height: 100%;
     top: 0;
     z-index: 1;
+}
+
+#editor-tools {
+    height: 40px;
+    line-height: 40px;
+}
+
+#editor-tools span {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+button.text-button {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.separator {
+    border-left: 1px solid white;
+}
+
+#editor-tools .right {
+    float: right;
+    margin-right: 0px;
+}
+
+.modal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    text-align: center;
+    cursor: pointer;
+}
+
+.modal {
+    background-color: var(--background-color);
+    width: 40%;
+    padding: 10px;
+    border-radius: 2px;
+    text-align: left;
+    display: inline-block;
+    margin-top: 100px;
+    cursor: default;
+}
+
+.modal p {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+button.share-button {
+    margin-left: 20px;
+}
+
+.user-list-container {
+    margin-top: 10px;
+}
+
+span.shared-with {
+    padding: 10px;
+    background-color: #222;
+    margin-right: 20px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.danger {
+    background-color: #ff0039;
+}
+
+.header {
+    font-size: 1.2em;
+    font-weight: bold;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
