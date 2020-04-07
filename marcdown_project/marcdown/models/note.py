@@ -20,9 +20,6 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
-    
-    def is_owner(self, user):
-        return user.is_authenticated and self.owner == user.profile
 
     def allow_reading_by_user(self, profile):
         '''
@@ -64,7 +61,7 @@ class Note(models.Model):
             # update tags
             self.parse_tags()
             
-            self.save();
+            self.save()
 
             return True
         else:
@@ -93,7 +90,6 @@ class Note(models.Model):
     def parse_tags(self):
         '''
         Finds tags within its content, updates the instance tags field, and returns them.
-
         Tags are denoted by a 6th level header named tags, like this:
 
         ###### tags: `tag1`, `tag2`, ...
@@ -103,7 +99,7 @@ class Note(models.Model):
         new_tags = set()
         old_tags = set(map(lambda tag : tag.name, self.tags.all()))
 
-        regex = r"^#{6} tags: (`[^`]+`(?:, `[^`]+`)*)$"
+        regex = r"^#{6} tags: (`[^`]+`(?:, `[^`]+`)*).*$"
         for line in self.content.split('\n'):
             match = re.findall(regex, line)
             if match:
@@ -114,8 +110,8 @@ class Note(models.Model):
                 break
         
         for removed_tag in old_tags.difference(new_tags):
-            self.tags.remove(removed_tag)
-            # TODO: check if tag should be deleted from db ?
+            tag_id = self.tags.all().get(name=removed_tag)
+            self.tags.remove(tag_id)
 
         for added_tag in new_tags.difference(old_tags):
             tag_instance, dummy = Tag.objects.get_or_create(name=added_tag)
