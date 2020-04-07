@@ -75,10 +75,10 @@ class NoteViewSet(viewsets.ViewSet):
                 note.public = data.get("public", note.public)
                 note.read_only = data.get("readOnly", note.read_only)
                 new_sharers_names = data.get("sharedWith", None)
+                bad_sharers = []
                 if new_sharers_names:
                     note.sharers.set([])
 
-                    bad_sharers = []
                     for sharer_name in new_sharers_names:
                         try:
                             sharer = User.objects.get(username=sharer_name).profile
