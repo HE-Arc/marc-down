@@ -76,7 +76,7 @@ class NoteViewSet(viewsets.ViewSet):
                 note.read_only = data.get("readOnly", note.read_only)
                 new_sharers_names = data.get("sharedWith", None)
                 bad_sharers = []
-                if new_sharers_names:
+                if new_sharers_names is not None:
                     note.sharers.set([])
 
                     for sharer_name in new_sharers_names:
