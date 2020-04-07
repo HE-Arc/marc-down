@@ -9,6 +9,7 @@ class Home extends Component {
     this.state = {
       ownCards: [],
       sharedCards: [],
+      publicFavoritesCards: [],
       tags: {},
       tagSearchValue: "",
       nameSearchValue: ""
@@ -29,6 +30,7 @@ class Home extends Component {
           const favorite = result.favorites[j];
 
           if (favorite.id === note.id) {
+            favorite.ownedOrShared = true;
             note.starred = true;
             break;
           }
@@ -45,11 +47,22 @@ class Home extends Component {
           }
         }
       }
-      
+
+      let publicFavoritesCards = [];
+      for (let i = 0; i < result.favorites.length; i++) {
+        const card = result.favorites[i];
+
+        // Public favorite
+        if (!card.ownedOrShared) {
+          publicFavoritesCards.push(card);
+        }
+      }
+
       this.setState({
         tags: tags,
         ownCards: result.own_notes,
         sharedCards: result.shared_notes,
+        publicFavoritesCards: publicFavoritesCards
       });
     }).catch((err) => {
       console.error(err);
@@ -119,12 +132,21 @@ class Home extends Component {
             {this.state.ownCards.filter((card) => this._filterNotes(card)).map((card, key) =>
               <Card starred={card.starred} key={key} id={card.id} tags={card.tags} owner={card.owner.name}>{card.title || "Untitled"}</Card>
             )}
+            {this.state.ownCards.length === 0 ? "No notes owned" : ""}
           </div>
           <h1>Shared with me</h1>
           <div>
             {this.state.sharedCards.filter((card) => this._filterNotes(card)).map((card, key) =>
               <Card starred={card.starred} key={key} id={card.id} tags={card.tags} owner={card.owner.name}>{card.title || "Untitled"}</Card>
             )}
+            {this.state.sharedCards.length === 0 ? "No notes shared with you" : ""}
+          </div>
+          <h1>Starred public notes</h1>
+          <div>
+            {this.state.publicFavoritesCards.filter((card) => this._filterNotes(card)).map((card, key) =>
+              <Card starred={card.starred} key={key} id={card.id} tags={card.tags} owner={card.owner.name}>{card.title || "Untitled"}</Card>
+            )}
+            {this.state.publicFavoritesCards.length === 0 ? "No public starred notes" : ""}
           </div>
         </div>
       </div>
