@@ -8,6 +8,9 @@ after 'deploy:publishing', 'uwsgi:restart'
 after 'deploy:updating', 'python:create_venv'
 after 'deploy:updating', 'python:migrate'
 
+after 'deploy:updating', 'node:install'
+after 'deploy:updating', 'node:build'
+
 namespace :uwsgi do
 	desc 'Restart application'
 	task :restart do
@@ -35,6 +38,24 @@ namespace :python do
 	task :migrate do
 		on roles([:app, :web]) do |h|
 			execute "#{venv_path}/bin/python #{release_path}/marcdown_project/manage.py migrate"
+		end
+	end
+namespace :node do
+	def package_path
+		File.join(release_path, 'marcdown_project/frontend')
+	end
+
+	desc 'Install node packages'
+	task :install do
+		on roles([:app, :web]) do |h|
+			execute "npm --prefix #{package_path} install #{package_path}"
+		end
+end
+
+	desc '"Compile" the JS'
+	task :build do
+		on roles([:app, :web]) do |h|
+			execute "npm --prefix #{package_path} run build"
 		end
 	end
 end
