@@ -58,8 +58,13 @@ class Editor extends Component {
                 sharedWith: this.state.sharedWith,
                 content: this.state.input
             }).then((result) => {
-                location.hash = `/note/${result.id}`;
-                this.setState({ existsInDatabase: true, noteId: result.id, previousSavedText: this.state.input });
+                if (result.id !== undefined) {
+                    location.hash = `/note/${result.id}`;
+                    this.setState({ existsInDatabase: true, noteId: result.id, previousSavedText: this.state.input });
+                }
+                else {
+                    this.setState({ readOnly: true, isOwner: false, defaultInput: "# You are not logged in!\n\nClick [here](/login) to go to the login page.\n\n\n\n(Yes you can still type, but it won't be saved)\n\n---\n" });
+                }
             });
         }
     }
