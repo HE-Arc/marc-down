@@ -16,18 +16,17 @@ export default class Card extends Component {
 
     render(...rest) {
         return (
-            <Link to={`/note/${this.props.id}`}>
-                <div className="note-card">
-                    <Star />
-                    <span className="title">{this.props.children}</span>
-                    <div>
-                        {this.props.tags.map((tag, key) =>
-                            <Tag key={key}>{tag.name}</Tag>
-                        )}
-                    </div>
-                    <div className="note-owner">{this.props.owner}</div>
+            <div className="note-card">
+                <Link className="wrap-link" to={`/note/${this.props.id}`} />
+                <Star />
+                <span className="title">{this.props.children}</span>
+                <div>
+                    {this.props.tags.map((tag, key) =>
+                        <Tag key={key}>{tag.name}</Tag>
+                    )}
                 </div>
-            </Link>
+                <div className="note-owner">{this.props.owner}</div>
+            </div>
         );
     }
 }
