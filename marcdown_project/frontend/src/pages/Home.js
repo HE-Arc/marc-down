@@ -19,17 +19,24 @@ class Home extends Component {
 
   _loadCards() {
     query("/api/user").then((result) => {
-      this.setState({
-        ownCards: result.own_notes,
-        sharedCards: result.shared_notes,
-      });
-
       const allNotes = result.own_notes.concat(result.shared_notes);
       let tags = {};
       for (let i = 0; i < allNotes.length; i++) {
-        const card = allNotes[i];
-        for (let j = 0; j < card.tags.length; j++) {
-          const tag = card.tags[j];
+        const note = allNotes[i];
+
+        // Set starred or not
+        for (let j = 0; j < result.favorites.length; j++) {
+          const favorite = result.favorites[j];
+
+          if (favorite.id === note.id) {
+            note.starred = true;
+            break;
+          }
+        }
+
+        // Calculate tag count
+        for (let j = 0; j < note.tags.length; j++) {
+          const tag = note.tags[j];
           if (tags[tag.name] === undefined) {
             tags[tag.name] = 1;
           }
@@ -38,9 +45,11 @@ class Home extends Component {
           }
         }
       }
-
+      
       this.setState({
-        tags: tags
+        tags: tags,
+        ownCards: result.own_notes,
+        sharedCards: result.shared_notes,
       });
     }).catch((err) => {
       console.error(err);
@@ -108,13 +117,13 @@ class Home extends Component {
           <h1>My notes</h1>
           <div>
             {this.state.ownCards.filter((card) => this._filterNotes(card)).map((card, key) =>
-              <Card key={key} id={card.id} tags={card.tags} stared={true} owner={card.owner.name}>{card.title || "Untitled"}</Card>
+              <Card starred={card.starred} key={key} id={card.id} tags={card.tags} owner={card.owner.name}>{card.title || "Untitled"}</Card>
             )}
           </div>
           <h1>Shared with me</h1>
           <div>
             {this.state.sharedCards.filter((card) => this._filterNotes(card)).map((card, key) =>
-              <Card key={key} id={card.id} tags={card.tags} stared={true} owner={card.owner.name}>{card.title || "Untitled"}</Card>
+              <Card starred={card.starred} key={key} id={card.id} tags={card.tags} owner={card.owner.name}>{card.title || "Untitled"}</Card>
             )}
           </div>
         </div>

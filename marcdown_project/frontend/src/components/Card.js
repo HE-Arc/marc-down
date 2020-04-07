@@ -9,6 +9,7 @@ import {
 export default class Card extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             tags: []
         };
@@ -18,7 +19,7 @@ export default class Card extends Component {
         return (
             <div className="note-card">
                 <Link className="wrap-link" to={`/note/${this.props.id}`} />
-                <Star />
+                <Star noteId={this.props.id} starred={this.props.starred}/>
                 <span className="title">{this.props.children}</span>
                 <div>
                     {this.props.tags.map((tag, key) =>
