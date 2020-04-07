@@ -36,12 +36,17 @@ class Editor extends Component {
             editor: undefined
         };
 
+        this.saveInterval = -1;
+
         this.modal = React.createRef();
     }
 
     _saveNote() {
         if (this.state.existsInDatabase) {
             const patchText = dmp.patch_toText(dmp.patch_make(this.state.previousSavedText, this.state.input));
+            if (patchText === "") {
+                return;
+            }
 
             query(`/api/note/${this.state.noteId}/`, "PATCH", {
                 diff: patchText
@@ -67,6 +72,18 @@ class Editor extends Component {
                 }
             });
         }
+    }
+
+    restartTimer() {
+        clearTimeout(this.saveInterval);
+        this.saveInterval = setTimeout(() => {
+            this._saveNote();
+        }, 1000);
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.saveInterval);
+        this._saveNote();
     }
 
     _setReadOnly(readOnly) {
@@ -154,6 +171,8 @@ class Editor extends Component {
     }
 
     componentDidMount() {
+        this.restartTimer();
+
         if (this.props.match.params.id === "new") {
             this.setState({ defaultInput: "# Note name\n\n###### tags: `untagged`" });
         } else {
@@ -196,7 +215,7 @@ class Editor extends Component {
                         }}
                         onChange={(editor, data, value) => {
                             this.setState({ input: value });
-
+                            this.restartTimer();
                             // Save when the user uses space, paste something, add a new line, delete a space or remove a lot of text (ctrl-backspace)
                             if (
                                 (data.origin === "paste") ||
