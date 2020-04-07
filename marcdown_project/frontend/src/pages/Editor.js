@@ -203,8 +203,10 @@ class Editor extends Component {
                         }}
                     />
                 </div>
-                <div id="md-render">
-                    <ReactMarkdown source={this.state.input} />
+                <div id="md-render" className={this.state.readOnly && !this.state.isOwner ? "read-only" : ""}>
+                    <ReactMarkdown
+                        source={this.state.input}
+                    />
                 </div>
                 <Modal ref={this.modal}>
                     <span className="header">Permissions</span>
