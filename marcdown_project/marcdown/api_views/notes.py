@@ -36,7 +36,7 @@ class NoteViewSet(viewsets.ViewSet):
         elif note.public:
             data = {
                 'is_owner' : False,
-                'can_write' : False,
+                'can_write' : not note.read_only,
             }
         else:
             return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={"status" : False, "message" : "Authentication is required"})
