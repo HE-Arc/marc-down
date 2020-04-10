@@ -6,7 +6,6 @@ set :repo_url, "https://github.com/HE-Arc/marc-down.git"
 
 after 'deploy:publishing', 'uwsgi:restart'
 
-after 'deploy:updating', 'python:applychanges'
 after 'deploy:updating', 'python:create_venv'
 after 'deploy:updating', 'python:migrate'
 
@@ -27,13 +26,6 @@ end
 namespace :python do
 	def venv_path
 		File.join(shared_path, 'env')
-	end
-
-	desc 'Apply changes specific to the server'
-	task :applychanges do
-		on roles([:app, :web]) do |h|
-			execute "bash #{release_path}/deploy.sh"
-		end
 	end
 
 	desc 'Create venv'
