@@ -14,6 +14,10 @@ class PrivateRoute extends Component {
         };
     }
 
+    /**
+     * Query the user API to check if we are logged in or not
+     * This is rather hacky, and could be fixed by implementing the whole login client side
+     */
     componentDidMount() {
         auth.loggedIn().then((result) => {
             if (result) {

@@ -10,19 +10,29 @@ export default class Modal extends Component {
         };
     }
 
+    /**
+     * Display the modal
+     */
     display() {
         this.setState({
             displayed: true
         });
     }
 
+    /**
+     * Hide the modal
+     */
     hide() {
         this.setState({
             displayed: false
         });
     }
 
-    hideOnClick(e) {
+    /**
+     * Hide the modal when background is clicked, intended to be a callback
+     * @param {event} e a click event
+     */
+    _hideOnClick(e) {
         if (e.target.classList.contains("modal-background")) {
             this.hide();
         }
@@ -30,7 +40,7 @@ export default class Modal extends Component {
 
     render(...rest) {
         return (
-            this.state.displayed ? <div onClick={(e) => { this.hideOnClick(e); }} className="modal-background">
+            this.state.displayed ? <div onClick={(e) => { this._hideOnClick(e); }} className="modal-background">
                 <div className="modal">{this.props.children}</div>
             </div> : null
         );
