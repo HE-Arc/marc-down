@@ -32,6 +32,8 @@ class Home extends Component {
           if (favorite.id === note.id) {
             favorite.ownedOrShared = true;
             note.starred = true;
+            // If the note is starred, with add a "starred" tag for search purposes
+            note.tags.push({id: -1, name: "starred"});
             break;
           }
         }
