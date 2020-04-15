@@ -2,6 +2,9 @@ import React, { Component } from "react";
 
 import TagListItem from "./TagListItem.js";
 
+/**
+ * Display all given tags
+ */
 export default class TagList extends Component {
     constructor(props) {
         super(props);

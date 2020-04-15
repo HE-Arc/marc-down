@@ -2,6 +2,10 @@
 import React, { Component } from "react";
 import query from "../helpers.js";
 
+/**
+ * Star that can be toggled
+ * In the future, should not use "props.card" to make it usable anywhere
+ */
 export default class Star extends Component {
     constructor(props) {
         super(props);

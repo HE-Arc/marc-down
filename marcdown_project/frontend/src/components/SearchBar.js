@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 
+/**
+ * Searchbar on the main page
+ * Note: SearchBar and SearchTagBar could definitely be merged into one in the future
+ */
 export default class SearchBar extends Component {
     constructor(props) {
         super(props);

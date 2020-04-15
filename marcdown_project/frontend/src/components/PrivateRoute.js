@@ -3,7 +3,9 @@ import React, { Component } from "react";
 import { Route, Redirect, BrowserRouter } from "react-router-dom";
 import { auth } from "../authentication.js";
 
-
+/**
+ * Like a route, but requires being logged in
+ */
 class PrivateRoute extends Component {
     constructor(props) {
         super(props);
@@ -25,7 +27,7 @@ class PrivateRoute extends Component {
             } else {
                 this.setState({ toLogin: true });
             }
-        }).catch((e) => { console.log })
+        }).catch((e) => { console.error })
     }
 
     render(...rest) {

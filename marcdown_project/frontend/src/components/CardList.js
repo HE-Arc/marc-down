@@ -2,6 +2,9 @@ import React, { Component } from "react";
 
 import Card from "../components/Card.js"
 
+/**
+ * Container of all cards displayed on the home page
+ */
 export default class CardList extends Component {
     constructor(props) {
         super(props);

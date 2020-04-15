@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 
+/**
+ * Search bar for tags
+ */
 export default class SearchTagBar extends Component {
     constructor(props) {
         super(props);

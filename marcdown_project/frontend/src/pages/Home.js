@@ -6,6 +6,9 @@ import TagList from "../components/TagList.js";
 import SearchBar from "../components/SearchBar.js";
 import SearchTagBar from "../components/SearchTagBar.js";
 
+/**
+ * List all notes, allow filtering by tag and more
+ */
 class Home extends Component {
     constructor(params) {
         super(params);
@@ -33,8 +36,6 @@ class Home extends Component {
         query("/api/user").then((result) => {
             const allNotes = result.own_notes.concat(result.shared_notes);
             const tags = {};
-
-            console.log(allNotes);
 
             for (let i = 0; i < allNotes.length; i++) {
                 const note = allNotes[i];
