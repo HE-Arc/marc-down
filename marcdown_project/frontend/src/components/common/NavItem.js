@@ -11,7 +11,7 @@ class NavItem extends Component {
 
     render() {
         return (
-            <NavLink exact={this.props.exact || false} to={this.props.url}>{this.props.children}</NavLink>
+            <NavLink exact={this.props.exact || false} to={this.props.url} {...this.props}>{this.props.children}</NavLink>
         );
     }
 }

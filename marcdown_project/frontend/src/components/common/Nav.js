@@ -15,7 +15,7 @@ class Nav extends Component {
                             <NavItem url="/" exact={true}>Home</NavItem>
                         </li>
                         <li>
-                            <NavItem url="/note/new">New Note</NavItem>
+                            <NavItem isActive={(match, location) => location && location.pathname.includes("/note/")} url="/note/new">New Note</NavItem>
                         </li>
                         <li>
                             <a href="/logout">Logout</a>
