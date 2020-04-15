@@ -94,6 +94,7 @@ class Editor extends Component {
      * Attempt to save the note to the db
      */
     _saveNote() {
+        clearTimeout(this.saveIntervalId);
         // Does the note already exists in the database ?
         if (this.state.note.id !== null) {
 
@@ -157,7 +158,6 @@ class Editor extends Component {
      * Saves the note before leaving and clear timer
      */
     componentWillUnmount() {
-        clearTimeout(this.saveIntervalId);
         this._saveNote();
     }
 
@@ -188,8 +188,6 @@ class Editor extends Component {
      * Handle loading a note or create a new one
      */
     componentDidMount() {
-        this.restartTimer();
-
         if (this.props.match.params.id === "new") {
             this.setState({ defaultInput: "# Note name\n\n###### tags: `untagged`" });
         } else {
@@ -232,13 +230,14 @@ class Editor extends Component {
                         }}
                         onChange={(editor, data, value) => {
                             this.setState({ currentInputValue: value });
-                            this.restartTimer();
+                            if (data.origin !== undefined) {
+                                this.restartTimer();
+                            }
 
-                            // Save when the user uses space, paste something, add a new line, delete a space or remove a lot of text (ctrl-backspace)
                             if (
-                                (data.origin === "paste") ||
-                                (data.text !== undefined && data.text[0] === " " || data.text.length === 2) ||
-                                (data.removed !== undefined && (data.removed[0] === " " || (data.removed[0].length > 2 && data.origin === "+delete")))
+                                (data.origin === "paste" || data.origin === "undo" || data.origin === "redo") ||         // undo redo paste
+                                (data.origin === "+input" && (data.text[0] === " " || data.text.length === 2)) ||        // add space or new line
+                                (data.origin === "+delete" && (data.removed[0] === " " || (data.removed[0].length > 2))) // delete space or a lot of text
                             ) {
                                 this._saveNote();
                             }
