@@ -118,6 +118,7 @@ button {
     bottom: 0;
     position: fixed;
     padding-bottom: 20px;
+    width: calc(100% - 260px);
 }
 
 .note-card .title {
