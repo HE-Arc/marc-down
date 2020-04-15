@@ -4,6 +4,10 @@ import {
     NavLink,
 } from "react-router-dom";
 
+/**
+ * That's literally a NavLink.
+ * This class should be deleted as it's literally useless. It was created before we knew how react worked
+ */
 class NavItem extends Component {
     constructor(params) {
         super(params);
