@@ -138,7 +138,7 @@ class Editor extends Component {
                 else {
                     // At the moment, if any error occur we assume the user is logged out
                     this._setErrorMessage("# You are not logged in!\n\nClick [here](/login) to go to the login page.\n\n\n\n(Yes you can still type, but it won't be saved)\n\n---\n");
-                    this.setState({ note: { id: null, readOnly: true, isOwner: false } });
+                    this.setState({ note: { ...this.state.note, id: null, readOnly: true, isOwner: false } });
                 }
             });
         }
