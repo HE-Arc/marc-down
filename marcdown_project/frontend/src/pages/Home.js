@@ -78,6 +78,7 @@ class Home extends Component {
 
                 // Starred public note
                 if (!card.notPublic) {
+                    card.starred = true;
                     publicStarredCards.push(card);
                 }
             }

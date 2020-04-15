@@ -33,7 +33,8 @@ class Editor extends Component {
                 isOwner: true,
                 public: false,
                 readOnly: false,
-                sharedWith: []
+                sharedWith: [],
+                starred: false
             },
         };
 
@@ -204,6 +205,19 @@ class Editor extends Component {
             <div>
                 <div id="editor">
                     <div id="editor-tools">
+                        {
+                            // This is a really temp solution to be able to star public note
+                            // If this website was to be properly fixed, it should be a real star button, hidden for disconnected users
+                            this.state.note.public && !this.state.note.isOwner && !this.state.note.starred ?
+                                <EditorTextButton onClick={() => {
+                                    query(`/api/user/favorites/`, "POST", {
+                                        noteId: this.state.note.id
+                                    });
+                                    this.setState({ note: { ...this.state.note, starred: true } });
+                                }}>Star</EditorTextButton>
+                                : null
+                        }
+
                         <EditorTextButton onClick={() => { this._appendText("[](url)") }}>Link</EditorTextButton>
                         <EditorTextButton onClick={() => { this._appendText("![](url)") }}>Image</EditorTextButton>
                         {
