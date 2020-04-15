@@ -57,6 +57,7 @@ export default class ModalPermissions extends Component {
             // Remove bad sharers and update
             if (result.badSharerNames.length > 0) {
                 this.setState({ inputSharer: "User not found" });
+                document.getElementById("input-sharer").select();
                 newSharedArray.splice(newSharedArray.indexOf(result.badSharerNames), 1);
             }
 
@@ -108,6 +109,7 @@ export default class ModalPermissions extends Component {
                 <span className="header">Shared with</span>
                 <p>
                     <input
+                        id="input-sharer"
                         value={this.state.inputSharer}
                         type="text"
                         placeholder="Username"
