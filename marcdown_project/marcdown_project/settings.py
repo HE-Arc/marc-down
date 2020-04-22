@@ -31,7 +31,7 @@ except:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['marcdown.srvz-webapp.he-arc.ch', 'localhost']
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition

@@ -8,159 +8,80 @@ import "../../static/styles/code-mirror.css"
 import query from "../helpers.js";
 import ReactMarkdown from "react-markdown"
 import DiffMatchPatch from "diff-match-patch";
-import Modal from "../components/Modal"
+import ModalPermissions from "../components/ModalPermissions"
+import EditorTextButton from "../components/EditorTextButton";
 
 const dmp = new DiffMatchPatch();
 
+const TYPE_TIMER_SAVE_DELAY = 1000; // in ms
 
-
+/**
+ * Editor, manage note loading and displaying
+ */
 class Editor extends Component {
     constructor(params) {
         super(params);
+
         this.state = {
-            input: "Loading...",
-            existsInDatabase: false,
-            previousSavedText: "",
-            noteId: -1,
-            modalDisplayed: false,
-            public: false,
-            readOnly: false,
-            isOwner: true,
-            inputSharer: "",
-            sharedWith: [],
-            redirectToMainPage: false
+            redirectToMainPage: false,
+            modalPermissionDisplayed: false,
+            defaultInputValue: "Loading...", // Track default and current separately to fix an issue related to codemirror updating twice
+            currentInputValue: "",
+            noteTextInput: "",
+            note: {
+                id: null,
+                isOwner: true,
+                public: false,
+                readOnly: false,
+                sharedWith: [],
+                starred: false
+            },
         };
 
+        // Store codemirror last state to be able to append values to it
         this.codemirror = {
             lastKnownPos: undefined,
             editor: undefined
         };
 
-        this.saveInterval = -1;
-
-        this.modal = React.createRef();
+        this.lastSavedText = "";
+        this.saveIntervalId = -1;
     }
 
-    _saveNote() {
-        if (this.state.existsInDatabase) {
-            const patchText = dmp.patch_toText(dmp.patch_make(this.state.previousSavedText, this.state.input));
-            if (patchText === "") {
-                return;
-            }
-
-            query(`/api/note/${this.state.noteId}/`, "PATCH", {
-                diff: patchText
-            }).then((result) => { }).catch(() => {
-                alert("Something went wrong when updating the note. You may be out of sync, the page will be reloaded.");
-                location.reload();
-            });
-            this.state.previousSavedText = this.state.input;
-        } else {
-            // Create a new note
-            query(`/api/note/`, "POST", {
-                public: this.state.public,
-                readOnly: this.state.readOnly,
-                sharedWith: this.state.sharedWith,
-                content: this.state.input
-            }).then((result) => {
-                if (result.id !== undefined) {
-                    location.hash = `/note/${result.id}`;
-                    this.setState({ existsInDatabase: true, noteId: result.id, previousSavedText: this.state.input });
-                }
-                else {
-                    this.setState({ readOnly: true, isOwner: false, defaultInput: "# You are not logged in!\n\nClick [here](/login) to go to the login page.\n\n\n\n(Yes you can still type, but it won't be saved)\n\n---\n" });
-                }
-            });
-        }
+    /**
+     * Replace editor content by message
+     * @param {string} message
+     */
+    _setErrorMessage(message) {
+        // TODO: Better handling than just displaying in editor
+        this.setState({ defaultInput: message });
     }
 
-    restartTimer() {
-        clearTimeout(this.saveInterval);
-        this.saveInterval = setTimeout(() => {
-            this._saveNote();
-        }, 1000);
-    }
 
-    componentWillUnmount() {
-        clearTimeout(this.saveInterval);
-        this._saveNote();
-    }
-
-    _setReadOnly(readOnly) {
-        query(`/api/note/${this.state.noteId}/`, "PUT", {
-            readOnly: readOnly
-        }).then((result) => { });
-        this.setState({ readOnly: readOnly });
-    }
-
-    _setPublic(isPublic) {
-        query(`/api/note/${this.state.noteId}/`, "PUT", {
-            public: isPublic
-        }).then((result) => { });
-        this.setState({ public: isPublic });
-    }
-
-    _addSharedUser() {
-        let newSharedArray = [...this.state.sharedWith, this.state.inputSharer];
-        this.setState({ inputSharer: "" });
-
-        query(`/api/note/${this.state.noteId}/`, "PUT", {
-            sharedWith: newSharedArray
-        }).then((result) => {
-            // Remove bad sharers and update
-            if (result.badSharerNames.length > 0) {
-                this.setState({ inputSharer: "User not found" });
-                newSharedArray.splice(newSharedArray.indexOf(result.badSharerNames), 1);
-            }
-
-            this.setState({ sharedWith: newSharedArray });
-        });
-    }
-
-    _removeSharedUser(index) {
-        let newSharedArray = this.state.sharedWith;
-        newSharedArray.splice(index, 1);
-
-        query(`/api/note/${this.state.noteId}/`, "PUT", {
-            sharedWith: newSharedArray
-        }).then((result) => { });
-
-        this.setState({ sharedWith: newSharedArray });
-    }
-
-    _appendText(text) {
-        this.codemirror.editor.replaceRange(text, this.codemirror.lastKnownPos);
-    }
-
-    _deleteNote() {
-        if (confirm("Delete this note?")) {
-            query(`/api/note/${this.state.noteId}/`, "DELETE").then((result) => {
-                this.setState({ redirectToMainPage: true });
-            });
-        }
-    }
-
+    /**
+     * Attempt to load a note from database
+     * @param {Number} id 
+     */
     _loadFromDatabase(id) {
-        id = parseInt(id);
-
         if (isNaN(id)) {
-            this.setState({ defaultInput: "# Could not load this note\n\nInvalid ID specified\n\nEdit this note to create a new one" });
+            this._setErrorMessage("# Could not load this note\n\nInvalid ID specified\n\nEdit this note to create a new one");
         } else {
             query(`/api/note/${id}`).then((result) => {
                 if (result.id === undefined) {
-                    this.setState({ defaultInput: "# Could not load this note\n\n**Error detail**: " + result.detail + "\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one" });
+                    this._setErrorMessage(`# Could not load this note\n\n**Error detail**: ${result.detail}\n\nMake sure you have the permission to read this note\n\nEdit this note to create a new one`);
                 } else {
                     const sharedWith = result.sharers.map(r => r.name);
 
+                    this.lastSavedText = result.content;
                     this.setState({
                         defaultInput: result.content,
-                        existsInDatabase: true,
-                        previousSavedText: result.content,
-                        noteId: id,
-                        isOwner: result.is_owner,
-                        public: result.public,
-                        readOnly: result.read_only,
-                        sharedWith: sharedWith
+                        note: {
+                            id: id,
+                            isOwner: result.is_owner,
+                            public: result.public,
+                            readOnly: result.read_only,
+                            sharedWith: sharedWith
+                        }
                     });
                 }
             }).catch((error) => {
@@ -170,13 +91,108 @@ class Editor extends Component {
         }
     }
 
-    componentDidMount() {
-        this.restartTimer();
+    /**
+     * Attempt to save the note to the db
+     */
+    _saveNote() {
+        clearTimeout(this.saveIntervalId);
+        // Does the note already exists in the database ?
+        if (this.state.note.id !== null) {
 
+            // Compute difference
+            const patchText = dmp.patch_toText(dmp.patch_make(this.lastSavedText, this.state.currentInputValue));
+            if (patchText === "") {
+                // Nothing changed
+                return;
+            }
+
+            query(`/api/note/${this.state.note.id}/`, "PATCH", {
+                diff: patchText
+            }).catch(() => {
+                // TODO: Better error handling (e.g, allow the user to copy what he did)
+                alert("Something went wrong when updating the note. You may be out of sync, the page will be reloaded.");
+                location.reload();
+            });
+
+            this.lastSavedText = this.state.currentInputValue;
+
+        } else {
+            // Create a new note
+            query(`/api/note/`, "POST", {
+                public: this.state.note.public,
+                readOnly: this.state.note.readOnly,
+                sharedWith: this.state.note.sharedWith,
+                content: this.state.currentInputValue
+            }).then((result) => {
+                if (result.id !== undefined) {
+                    // It worked, update the hash
+                    location.hash = `/note/${result.id}`;
+                    this.lastSavedText = this.state.currentInputValue;
+
+                    this.setState({
+                        note: {
+                            ...this.state.note,
+                            id: result.id
+                        }
+                    });
+                }
+                else {
+                    // At the moment, if any error occur we assume the user is logged out
+                    this._setErrorMessage("# You are not logged in!\n\nClick [here](/login) to go to the login page.\n\n\n\n(Yes you can still type, but it won't be saved)\n\n---\n");
+                    this.setState({ note: { ...this.state.note, id: null, readOnly: true, isOwner: false } });
+                }
+            });
+        }
+    }
+
+    /**
+     * Clear previous save timer and restart it
+     */
+    restartTimer() {
+        clearTimeout(this.saveIntervalId);
+        this.saveIntervalId = setTimeout(() => {
+            this._saveNote();
+        }, TYPE_TIMER_SAVE_DELAY);
+    }
+
+    /**
+     * Saves the note before leaving and clear timer
+     */
+    componentWillUnmount() {
+        this._saveNote();
+    }
+
+    /**
+     * Append text at last known cursor position
+     * @param {String} text 
+     */
+    _appendText(text) {
+        this.codemirror.editor.replaceRange(text, this.codemirror.lastKnownPos);
+    }
+
+    /**
+     * Set flag to route to main page
+     */
+    _redirectToMainPage() {
+        this.setState({ redirectToMainPage: true });
+    }
+
+    /**
+     * Change note state to update it (used by permission modal)
+     * @param {Object} note 
+     */
+    _updateNote(note) {
+        this.setState({ note: note });
+    }
+
+    /**
+     * Handle loading a note or create a new one
+     */
+    componentDidMount() {
         if (this.props.match.params.id === "new") {
             this.setState({ defaultInput: "# Note name\n\n###### tags: `untagged`" });
         } else {
-            this._loadFromDatabase(this.props.match.params.id);
+            this._loadFromDatabase(parseInt(this.props.match.params.id));
         }
     }
 
@@ -189,21 +205,34 @@ class Editor extends Component {
             <div>
                 <div id="editor">
                     <div id="editor-tools">
-                        <span><button onClick={() => { this._appendText("[](url)") }} className="text-button">Link</button></span>
-                        <span><button onClick={() => { this._appendText("![](url)") }} className="text-button">Image</button></span>
-                        <span><button onClick={() => { this._appendText("###### tags: `untagged`") }} className="text-button">Tags</button></span>
-                        {this.state.isOwner ?
-                            <span className="right">
-                                <button onClick={() => { this.modal.current.display(); }} className="text-button">
-                                    Manage Permissions
-                  </button>
-                            </span> : null
+                        {
+                            // This is a really temp solution to be able to star public note
+                            // If this website was to be properly fixed, it should be a real star button, hidden for disconnected users
+                            this.state.note.public && !this.state.note.isOwner && !this.state.note.starred ?
+                                <EditorTextButton onClick={() => {
+                                    query(`/api/user/favorites/`, "POST", {
+                                        noteId: this.state.note.id
+                                    });
+                                    this.setState({ note: { ...this.state.note, starred: true } });
+                                }}>Star</EditorTextButton>
+                                : null
+                        }
+
+                        <EditorTextButton onClick={() => { this._appendText("[](url)") }}>Link</EditorTextButton>
+                        <EditorTextButton onClick={() => { this._appendText("![](url)") }}>Image</EditorTextButton>
+                        {
+                            this.state.note.isOwner ?
+                                <span className="right">
+                                    <EditorTextButton onClick={() => { this.setState({ modalPermissionDisplayed: true }) }}>
+                                        Manage Permissions
+                                    </EditorTextButton>
+                                </span>
+                                : null
                         }
                     </div>
                     <CodeMirror
                         value={this.state.defaultInput}
                         options={{
-                            mode: "md",
                             theme: "material",
                             lineNumbers: true,
                         }}
@@ -214,47 +243,31 @@ class Editor extends Component {
                             };
                         }}
                         onChange={(editor, data, value) => {
-                            this.setState({ input: value });
-                            this.restartTimer();
-                            // Save when the user uses space, paste something, add a new line, delete a space or remove a lot of text (ctrl-backspace)
+                            this.setState({ currentInputValue: value });
+                            if (data.origin !== undefined) {
+                                this.restartTimer();
+                            }
+
                             if (
-                                (data.origin === "paste") ||
-                                (data.text !== undefined && data.text[0] === " " || data.text.length === 2) ||
-                                (data.removed !== undefined && (data.removed[0] === " " || (data.removed[0].length > 2 && data.origin === "+delete")))
+                                (data.origin === "paste" || data.origin === "undo" || data.origin === "redo") ||         // undo redo paste
+                                (data.origin === "+input" && (data.text[0] === " " || data.text.length === 2)) ||        // add space or new line
+                                (data.origin === "+delete" && (data.removed[0] === " " || (data.removed[0].length > 2))) // delete space or a lot of text
                             ) {
                                 this._saveNote();
                             }
                         }}
                     />
                 </div>
-                <div id="md-render" className={this.state.readOnly && !this.state.isOwner ? "read-only" : ""}>
-                    <ReactMarkdown
-                        source={this.state.input}
-                    />
+                <div id="md-render" className={this.state.note.readOnly && !this.state.note.isOwner ? "read-only" : ""}>
+                    <ReactMarkdown source={this.state.currentInputValue} />
                 </div>
-                <Modal ref={this.modal}>
-                    <span className="header">Permissions</span>
-                    <p><label><input type="checkbox" defaultChecked={this.state.public} onChange={(e) => { this._setPublic(e.target.checked) }} /> Public (everyone can see and edit)</label></p>
-                    <p><label><input type="checkbox" defaultChecked={this.state.readOnly} onChange={(e) => { this._setReadOnly(e.target.checked) }} /> Read only (only you can edit)</label></p>
-
-                    <span className="header">Shared with</span>
-                    <p>
-                        <input value={this.state.inputSharer} type="text" placeholder="Username" onChange={(e) => { this.setState({ inputSharer: e.target.value }) }}></input>
-                        <button onClick={() => { this._addSharedUser() }} className="share-button">Share</button>
-                    </p>
-                    <div className="user-list-container">
-                        <p>Click on a username to remove it from the list: </p>
-                        {this.state.sharedWith.map((username, key) =>
-                            <span onClick={() => { this._removeSharedUser(username); }} key={key} className="shared-with">{username}</span>
-                        )}
-                        {this.state.sharedWith.length === 0 ? <p>Not shared with anyone</p> : ""}
-                    </div>
-
-                    <span className="header">Advanced</span>
-                    <p>
-                        <button onClick={() => { this._deleteNote() }} className="danger">Delete this note</button>
-                    </p>
-                </Modal>
+                <ModalPermissions
+                    onBackgroundClicked={() => this.setState({ modalPermissionDisplayed: false })}
+                    onNoteUpdate={(note) => { this._updateNote(note); }}
+                    redirectToMainPage={() => { this._redirectToMainPage(); }}
+                    note={this.state.note}
+                    displayed={this.state.modalPermissionDisplayed}
+                />
             </div >
         );
     }
