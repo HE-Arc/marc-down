@@ -1,6 +1,9 @@
 
 import React, { Component } from "react";
 
+/**
+ * A clickable p (SHOULD BE A BUTTON IN THE FUTURE :()
+ */
 export default class TagListItem extends Component {
     constructor(props) {
         super(props);
