@@ -1,6 +1,6 @@
 asgiref==3.2.3
 diff-match-patch==20181111
-Django==3.0.4
+Django==3.0.7
 djangorestframework==3.11.0
 mysqlclient==1.4.6
 pkg-resources==0.0.0
