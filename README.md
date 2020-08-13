@@ -2,6 +2,10 @@
 
 [![Join the chat at https://gitter.im/HE-Arc/marc-down](https://badges.gitter.im/HE-Arc/marc-down.svg)](https://gitter.im/HE-Arc/marc-down?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+This project is now archived. It was a school project and it is not planned to work on it again in the future.
+
+## Description
+
 Write and save markdown notes online
 
 ## Installation
